@@ -23,19 +23,23 @@ def initialize_rules(L):                                                       #
 
     return rules
 
+def initialize(L):
 
-initialize_rules(3)
+    rul = []
+    res = [0] * 2**L
+    n=0
 
-#print(format(int(np.interp(0.1,[-0.2096,0.2096],[0,256])), '08b'))
+    for _ in range(2**L):
+        rul.append(format(n, ('0' + str(L) + 'b')))
+        n = n+1
 
-minAngle = -0.2095
-maxAngle =  0.2095
+    dic = dict(zip(rul,res))
 
-poleAngle = 0.1
-interpAngle = np.interp(poleAngle, [minAngle, maxAngle], [0, 256])
-binaryAngle = format(int(interpAngle), '08b')
-
-print(binaryAngle)
+    print(dic)
+initialize(4)
 
 
-print(format(128, 'b'))
+
+def initalize_window(worldWith, angel):
+    
+    return format(int(np.interp(angel,[-0.2095,0.2095],[0,2**worldWith])), ('0' + str(worldWith) + 'b'))
