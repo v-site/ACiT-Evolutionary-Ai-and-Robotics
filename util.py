@@ -15,11 +15,11 @@ def initialize_rules(L):                                                       #
         rul.append(format(n, ('0' + str(L) + 'b')))                            # Appends n in binary format to list of rules, example format; '03b', where 0 indicates leading zeroes, 3 is L (window length) in string form, and b indicates binary
         n = n+1
 
-    riles = dict(zip(rul,res))                                                 # Merges the list of rules with the list of outcomes
+    rules = dict(zip(rul,res))                                                 # Merges the list of rules with the list of outcomes
 
     print(rules)
 
     return rules
 
 
-def initialize_window():
+initialize_rules(3)
