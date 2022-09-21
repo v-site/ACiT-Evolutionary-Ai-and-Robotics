@@ -40,8 +40,3 @@ def initalize_window(worldWidth, angel):
         n += 1
 
     return worldMap
-
-
-
-print(initialize_rules(3))
-print(initalize_window(8, 0.2))
