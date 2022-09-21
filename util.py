@@ -15,23 +15,28 @@ def initialize_rules(windowLength):
 
     for n in range(2 ** windowLength):
 
-        conditionList.append(format(n, ('0' + str(windowLength) + 'b'))) # Appends n in binary format to list of conditions
+        # Appends n in binary format to list of conditions
+        conditionList.append(format(n, ('0' + str(windowLength) + 'b')))
         n += 1
 
-    return dict(zip(conditionList, responseList)) # Merges the list of conditions with the list of responses
+    # Merges the list of conditions with the list of responses
+    return dict(zip(conditionList, responseList))
 
 
 
 def initalize_window(worldWidth, angel):
 
-    binaryString = format(int(np.interp(angel,[-0.2095,0.2095],[0,2**worldWidth])), ('0' + str(worldWidth) + 'b')) # Maps the angle to a value between zero and the maximum binary worldwidth and converts to binary string
+    # Maps the angle to a value between zero and the maximum binary worldwidth and converts to binary string
+    binaryString = format(int(np.interp(angel,[-0.2095,0.2095],[0,2**worldWidth])), ('0' + str(worldWidth) + 'b'))
 
     worldMap = []
 
     n = 0
 
     for _ in range(worldWidth):
-        worldMap.append(int(binaryString[n])) # Appends the each character in the binary string as an int to the worldMap array
+
+        # Appends the each character in the binary string as an int to the worldMap array
+        worldMap.append(int(binaryString[n]))
         n += 1
 
     return worldMap
