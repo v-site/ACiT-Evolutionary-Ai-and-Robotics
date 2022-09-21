@@ -9,7 +9,7 @@ import gym
 env = gym.make("CartPole-v1", render_mode="human")  #render_mode can either be none (headless) or human (graphical)
 observation, info = env.reset() #(seed=42) If sample() is to be used to randomize the actionspace, env.reset needs to be seeded for repeatability
 
-for _ in range(100):
+for _ in range(1000):
     action = env.action_space.sample() #env.action_space.sample() can be used to randomize the action
     observation, reward, terminated, truncated, info = env.step(action)
 
