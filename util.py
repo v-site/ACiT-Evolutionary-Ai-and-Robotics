@@ -99,3 +99,11 @@ def voting(processedMap,votingMethod):
             return 1
 
     return 0
+
+
+def plot_rules(rules):
+
+    import matplotlib.pyplot as plt
+    a = [[0,1,0],[1,0,1]]
+    plt.imshow(a,cmap='gray')
+    plt.show()

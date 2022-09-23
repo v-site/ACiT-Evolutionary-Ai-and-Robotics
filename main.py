@@ -13,6 +13,7 @@ genome = 56 #must be less or equal to 2**2**windowlength (for windowlength of 3,
 
 for _ in range(1000):
     action = util.get_action(worldWidth, observation[2], windowLength, votingMethod, genome)
+    print(action)
     #env.action_space.sample() can be used to randomize the action
     observation, reward, terminated, truncated, info = env.step(action)
 
