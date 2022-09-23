@@ -104,18 +104,38 @@ def voting(processedMap,votingMethod):
 
     return 0
 
-#takes in a dict parents= [genome,fitness]
-def evolve(parents, cutSize, breedType):
-    
+#takes in a list parents= [genome,fitness]
+def evolve(parents, cutSize, breedType, operator, crossoverRatio):
+    parents = np.array(list(parents.items())) #changes list to np.array
     offsprings = [] #initiate offspring list
+    crossoverOffspring = np.array()
+    mutationOffspring = np.array()
     
+    if operator == 'deterministically':
+        crossoverOffspring = offsprings[:(len(offsprings)*crossoverRatio)]
+        mutationOffspring = offsprings[(len(offsprings)*(1-crossoverRatio)):]
+    i = 0
+    n = 0
+    
+    for i in mutationOffspring:
+        genome = mutationOffspring[i]
+        i +=1
+        for n in genome:
+            if  random <= 0.01:
+                if genome[n] == 1:
+                    genome[n] = 0
+                else: 
+                    genome[n] = 1
+            n+=1
+
+
+    offsprings = [] #initiate offspring list
+
     if breedType == 'one-point-crossover': #parent genome split in two and added together
         None
     if breedType == 'two-point-crossover': #parent genome split in two and added together
         None
     if breedType == 'end-cross-over': #parent genome split in two and added together
-        None
-    if breedType == 'mutation':
         None
 
     return offsprings
