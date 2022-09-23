@@ -71,6 +71,7 @@ def apply_rules(worldMap,rules,windowLength):
 
     edgeWidth = int((windowLength-1)/2)
     tempMap = [0]*edgeWidth + worldMap + [0]*edgeWidth
+    plotMap = worldMap
 
     for _ in range(len(worldMap)):
         processedMap = []
@@ -79,6 +80,9 @@ def apply_rules(worldMap,rules,windowLength):
             processedMap.append(rules[''.join(map(str, tempMap[n-edgeWidth:n+edgeWidth+1]))])
             n += 1
         tempMap = [0]*edgeWidth + processedMap + [0]*edgeWidth
+        plotMap = np.vstack((plotMap, processedMap))
+
+    print(plotMap)
 
     return processedMap
 
@@ -99,11 +103,3 @@ def voting(processedMap,votingMethod):
             return 1
 
     return 0
-
-
-def plot_rules(rules):
-
-
-    a = [[0,1,0],[1,0,1]]
-    plt.imshow(a,cmap='gray')
-    plt.show()
