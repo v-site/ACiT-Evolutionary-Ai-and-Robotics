@@ -4,7 +4,7 @@ Created on Wed Sep 21 14:48:05 2022
 
 @author: Pierre Boniface
 """
-
+import matplotlib.pyplot as plt
 import pycxsimulator
 from pylab import *
 import numpy as np
@@ -103,7 +103,7 @@ def voting(processedMap,votingMethod):
 
 def plot_rules(rules):
 
-    import matplotlib.pyplot as plt
+
     a = [[0,1,0],[1,0,1]]
     plt.imshow(a,cmap='gray')
     plt.show()
