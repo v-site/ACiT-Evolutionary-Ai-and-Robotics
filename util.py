@@ -96,10 +96,26 @@ def voting(processedMap,votingMethod):
         sumTail = sum(processedMap[l:])
 
         if sumHead == sumTail:
-            return int(random.uniform(0,1)) #randomly gives 0 or 1 of there is a tie
+            return int(random.randint(0,1)) #randomly gives 0 or 1 of there is a tie
         if sumHead > sumTail:
             return 0
         else:
             return 1
 
     return 0
+
+#takes in a dict parents= [genome,fitness]
+def evolve(parents, cutSize, breedType):
+    
+    offsprings = [] #initiate offspring list
+    
+    if breedType == 'one-point-crossover': #parent genome split in two and added together
+        None
+    if breedType == 'two-point-crossover': #parent genome split in two and added together
+        None
+    if breedType == 'end-cross-over': #parent genome split in two and added together
+        None
+    if breedType == 'mutation':
+        None
+
+    return offsprings
