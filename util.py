@@ -117,7 +117,7 @@ def evolve(parents, cutSize, breedType, operator, crossoverRatio):
         mutationParents = parents[(int(len(parents)*crossoverRatio)):]
 
         print(crossoverParents, '\n')
-        print(mutationParents, '\n')
+        print('mutParent', mutationParents)
 
     i = 0
     n = 0
@@ -128,14 +128,15 @@ def evolve(parents, cutSize, breedType, operator, crossoverRatio):
         parentGenome = list(mutationParents[i])
 
         for n in range(len(parentGenome)):
-            if  random.random() <= 0.01:
+            if  random.random() <= 0.1:
                 if parentGenome[n] == '1':
                     parentGenome[n] = '0'
                 else:
                     parentGenome[n] = '1'
             n += 1
 
-        print(mutationParents[i], genome.join(parentGenome))
+        #print(mutationParents[i], genome.join(parentGenome))
+        offsprings.append(genome.join(parentGenome))
         i += 1
 
 

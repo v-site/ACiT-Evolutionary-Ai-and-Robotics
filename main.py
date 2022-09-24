@@ -43,7 +43,7 @@ parents = {k: v for k, v in sorted(dict(zip(parentGenomes, parentResults)).items
 
 print(parents, '\n')
 
-util.evolve(parents, 0.2, 'one-point-crossover', 'deterministically', 0.8)
+print('offspring', util.evolve(parents, 0.2, 'one-point-crossover', 'deterministically', 0.8))
 
 
 #print (f"Episodes: {genomeEpisodes}")
