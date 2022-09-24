@@ -106,8 +106,10 @@ def voting(processedMap,votingMethod):
 
 #takes in a list parents= [genome,fitness]
 def evolve(parents, cutSize, breedType, operator, crossoverRatio):
+
     parents = list(dict(list(parents.items())[int(len(parents)*(1-cutSize)):]).keys())
     print('winners', parents, '\n')
+
     offspring = [] #initiate offspring list
     crossoverParents = []
     mutationParents = []
@@ -127,11 +129,14 @@ def evolve(parents, cutSize, breedType, operator, crossoverRatio):
         parentGenome = list(mutationParents[i])
 
         for n in range(len(parentGenome)):
+
             if  random.random() <= 0.01:
+
                 if parentGenome[n] == '1':
                     parentGenome[n] = '0'
                 else:
                     parentGenome[n] = '1'
+
             n += 1
 
         offspring.append(''.join(parentGenome))
