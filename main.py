@@ -10,7 +10,7 @@ observation, info = env.reset() #(seed=42) If sample() is to be used to randomiz
 worldWidth = 8 #must be even number
 windowLength = 3 #must be odd number
 votingMethod = 'equal_split'
-maxSteps = 200 #this allows the genom to respawn, if the simulation is terminated
+maxSteps = 100 #this allows the genom to respawn, if the simulation is terminated
 batchSize = 100
 
 parentGenomes = []

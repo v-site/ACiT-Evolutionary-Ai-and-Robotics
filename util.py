@@ -109,12 +109,12 @@ def evolve(parents, cutSize, breedType, operator, crossoverRatio):
     parents = list(dict(list(parents.items())[int(len(parents)*(1-cutSize)):]).keys())
     print(parents)
     offsprings = [] #initiate offspring list
-    crossoverOffspring = []
-    mutationOffspring = []
+    crossoverParents = []
+    mutationParents = []
 
     if operator == 'deterministically':
-        crossoverOffspring = offsprings[:(len(offsprings)*crossoverRatio)]
-        mutationOffspring = offsprings[(len(offsprings)*(1-crossoverRatio)):]
+        crossoverParents = parents[:int((len(parents)*crossoverRatio))]
+        mutationParents = parents[(int(len(parents)*crossoverRatio)):]
 
     i = 0
     n = 0
