@@ -102,7 +102,7 @@ def voting(processedMap,votingMethod):
         else:
             return 1
 
-    return 0
+    return 0 #WIP
 
 #takes in a list parents= [genome,fitness]
 def evolve(parents, cutSize, breedType, operator, crossoverRatio):
@@ -133,6 +133,7 @@ def evolve(parents, cutSize, breedType, operator, crossoverRatio):
             if  random.random() <= 0.01:
 
                 if parentGenome[n] == '1':
+
                     parentGenome[n] = '0'
                 else:
                     parentGenome[n] = '1'
