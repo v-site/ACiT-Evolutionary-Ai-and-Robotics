@@ -107,7 +107,7 @@ def voting(processedMap,votingMethod):
 #takes in a list parents= [genome,fitness]
 def evolve(parents, cutSize, breedType, operator, crossoverRatio):
     parents = list(dict(list(parents.items())[int(len(parents)*(1-cutSize)):]).keys())
-    print(parents)
+    print(parents, '\n')
     offsprings = [] #initiate offspring list
     crossoverParents = []
     mutationParents = []
@@ -116,19 +116,28 @@ def evolve(parents, cutSize, breedType, operator, crossoverRatio):
         crossoverParents = parents[:int((len(parents)*crossoverRatio))]
         mutationParents = parents[(int(len(parents)*crossoverRatio)):]
 
+        print(crossoverParents, '\n')
+        print(mutationParents, '\n')
+
     i = 0
     n = 0
+    genome = ''
 
-    for i in mutationOffspring:
-        genome = mutationOffspring[i]
-        i +=1
-        for n in genome:
-            if  random <= 0.01:
-                if genome[n] == 1:
-                    genome[n] = 0
+    for i in range(len(mutationParents)):
+
+        parentGenome = list(mutationParents[i])
+
+        for n in range(len(parentGenome)):
+            if  random.random() <= 0.01:
+                if parentGenome[n] == '1':
+                    parentGenome[n] = '0'
                 else:
-                    genome[n] = 1
-            n+=1
+                    parentGenome[n] = '1'
+            n += 1
+
+        print(mutationParents[i], genome.join(parentGenome))
+        i += 1
+
 
     if breedType == 'one-point-crossover': #parent genome split in two and added together
         None

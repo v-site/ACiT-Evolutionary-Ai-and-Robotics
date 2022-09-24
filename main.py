@@ -43,7 +43,9 @@ parents = {k: v for k, v in sorted(dict(zip(parentGenomes, parentResults)).items
 
 print(parents, '\n')
 
-print(util.evolve(parents, 0.2, 'one-point-crossover', 'deterministically', 0.8))
+util.evolve(parents, 0.2, 'one-point-crossover', 'deterministically', 0.8)
+
+
 #print (f"Episodes: {genomeEpisodes}")
 #print (f"Genome accumulated reward over {maxSteps} steps: {genomeReward}")
 #print (f"Reward / episodes: {round(genomeReward/genomeEpisodes, 2)}")
