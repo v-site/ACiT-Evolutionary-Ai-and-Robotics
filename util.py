@@ -82,7 +82,7 @@ def apply_rules(worldMap,rules,windowLength):
         tempMap = [0]*edgeWidth + processedMap + [0]*edgeWidth
         plotMap = np.vstack((plotMap, processedMap))
 
-    print(plotMap)
+    #print(plotMap)
 
     return processedMap
 
@@ -106,17 +106,19 @@ def voting(processedMap,votingMethod):
 
 #takes in a list parents= [genome,fitness]
 def evolve(parents, cutSize, breedType, operator, crossoverRatio):
-    parents = np.array(list(parents.items())) #changes list to np.array
+    parents = list(dict(list(parents.items())[int(len(parents)*(1-cutSize)):]).keys())
+    print(parents)
     offsprings = [] #initiate offspring list
-    crossoverOffspring = np.array()
-    mutationOffspring = np.array()
-    
+    crossoverOffspring = []
+    mutationOffspring = []
+
     if operator == 'deterministically':
         crossoverOffspring = offsprings[:(len(offsprings)*crossoverRatio)]
         mutationOffspring = offsprings[(len(offsprings)*(1-crossoverRatio)):]
+
     i = 0
     n = 0
-    
+
     for i in mutationOffspring:
         genome = mutationOffspring[i]
         i +=1
@@ -124,12 +126,9 @@ def evolve(parents, cutSize, breedType, operator, crossoverRatio):
             if  random <= 0.01:
                 if genome[n] == 1:
                     genome[n] = 0
-                else: 
+                else:
                     genome[n] = 1
             n+=1
-
-
-    offsprings = [] #initiate offspring list
 
     if breedType == 'one-point-crossover': #parent genome split in two and added together
         None

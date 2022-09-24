@@ -3,15 +3,15 @@ import util
 import random
 
 #initate
-env = gym.make("CartPole-v1", render_mode="human")  #render_mode can either be none (headless) or human (graphical)
+env = gym.make("CartPole-v1")  #render_mode = 'human' (graphical)
 observation, info = env.reset() #(seed=42) If sample() is to be used to randomize the actionspace, env.reset needs to be seeded for repeatability
 
 #initiate CA world
 worldWidth = 8 #must be even number
 windowLength = 3 #must be odd number
 votingMethod = 'equal_split'
-maxSteps = 100 #this allows the genom to respawn, if the simulation is terminated
-batchSize = 10
+maxSteps = 200 #this allows the genom to respawn, if the simulation is terminated
+batchSize = 100
 
 parentGenomes = []
 parentResults = []
@@ -27,7 +27,6 @@ for _ in range(batchSize):
 
     for _ in range(maxSteps):
         action = util.get_action(worldWidth, observation[2], windowLength, votingMethod, genome)
-        print(action)
         #env.action_space.sample() can be used to randomize the action
         observation, reward, terminated, truncated, info = env.step(action)
         genomeReward +=1
@@ -40,9 +39,11 @@ for _ in range(batchSize):
 
 env.close()
 
-parents = dict(zip(parentGenomes, parentResults))
+parents = {k: v for k, v in sorted(dict(zip(parentGenomes, parentResults)).items(), key=lambda item: item[1])}
 
-print(parents)
+print(parents, '\n')
+
+print(util.evolve(parents, 0.2, 'one-point-crossover', 'deterministically', 0.8))
 #print (f"Episodes: {genomeEpisodes}")
 #print (f"Genome accumulated reward over {maxSteps} steps: {genomeReward}")
 #print (f"Reward / episodes: {round(genomeReward/genomeEpisodes, 2)}")
