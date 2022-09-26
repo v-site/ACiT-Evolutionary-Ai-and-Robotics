@@ -152,13 +152,41 @@ def evolve(parents, cutSize, breedType, operator, crossoverRatio):
             p1 = list(crossoverParents[i])
             p2 = list(crossoverParents[i+1])
 
-            offspring.append(''.join(p1[:int(len(p1)/2)]+p2[int(len(p2)/2):]))
+            c = p1[:int(len(p1)/2)]+p2[int(len(p2)/2):]
+
+            offspring.append(''.join(c))
 
             i += 2
 
-    if breedType == 'two-point-crossover': #parent genome split in two and added together
-        None
+    i = 0
+
+    if breedType == 'two-point-crossover': #parent genome split in three and added together
+
+        for i in range(int(len(crossoverParents)/2)):
+
+            p1 = list(crossoverParents[i])
+            p2 = list(crossoverParents[i+1])
+
+            #add variable to control the split
+            c = p1[:int(len(p1)*0.25)]+p2[int(len(p2)*0.25):int(len(p2)*0.75)]+p1[int(len(p1)*0.75):]
+
+            offspring.append(''.join(c))
+
+            i += 2
+
+    i = 0
+
     if breedType == 'end-cross-over': #parent genome split in two and added together
-        None
+
+        for i in range(int(len(crossoverParents)/2)):
+
+            p1 = list(crossoverParents[i])
+            p2 = list(crossoverParents[i+1])
+
+            c = None
+
+            offspring.append(''.join(c))
+
+            i += 2
 
     return offspring
