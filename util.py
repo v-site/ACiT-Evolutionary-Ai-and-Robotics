@@ -10,8 +10,6 @@ from pylab import *
 import numpy as np
 import random
 
-#get_action(8, observation[2], 3, 'equal_split')
-
 def get_action(worldWidth, angel, windowLength, votingMethod, genome):
 
     worldMap = initialize_window(worldWidth, angel)
@@ -104,7 +102,9 @@ def voting(processedMap,votingMethod):
 
     return 0 #WIP
 
-#takes in a list parents= [genome,fitness]
+
+
+#takes in a list parents as [genome,fitness]
 def evolve(parents, cutSize, breedType, operator, crossoverRatio):
 
     parents = list(dict(list(parents.items())[int(len(parents)*(1-cutSize)):]).keys())
@@ -143,8 +143,19 @@ def evolve(parents, cutSize, breedType, operator, crossoverRatio):
         offspring.append(''.join(parentGenome))
         i += 1
 
+    i = 0
+
     if breedType == 'one-point-crossover': #parent genome split in two and added together
-        None
+
+        for i in range(int(len(crossoverParents)/2)):
+
+            p1 = list(crossoverParents[i])
+            p2 = list(crossoverParents[i+1])
+
+            offspring.append(''.join(p1[:int(len(p1)/2)]+p2[int(len(p2)/2):]))
+
+            i += 2
+
     if breedType == 'two-point-crossover': #parent genome split in two and added together
         None
     if breedType == 'end-cross-over': #parent genome split in two and added together

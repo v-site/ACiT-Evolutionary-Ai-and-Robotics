@@ -11,7 +11,7 @@ worldWidth = 16 #must be even number
 windowLength = 5 #must be odd (3 gives a genome length of 8 bit, 5; 32, 7, 125, 9, 256, 12, 1024)
 votingMethod = 'equal_split'
 maxSteps = 200 #this allows the genom to respawn, if the simulation is terminated
-batchSize = 100
+batchSize = 100 #should be divisible by crossover ratio
 
 parentGenomes = []
 parentResults = []
@@ -44,9 +44,3 @@ env.close()
 print(parents, '\n')
 
 print('offspring \n', util.evolve(parents, 0.2, 'one-point-crossover', 'deterministically', 0.8))
-
-
-#print (f"Episodes: {genomeEpisodes}")
-#print (f"Genome accumulated reward over {maxSteps} steps: {genomeReward}")
-#print (f"Reward / episodes: {round(genomeReward/genomeEpisodes, 2)}")
-
