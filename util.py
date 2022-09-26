@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Sep 21 14:48:05 2022
-
-@author: Pierre Boniface
-"""
-import matplotlib.pyplot as plt
-import pycxsimulator
 from pylab import *
 import numpy as np
 import random
