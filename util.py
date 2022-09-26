@@ -64,11 +64,15 @@ def apply_rules(worldMap,rules,windowLength):
     plotMap = worldMap
 
     for _ in range(len(worldMap)):
+
         processedMap = []
         n = edgeWidth
+
         for _ in range(len(worldMap)):
+
             processedMap.append(rules[''.join(map(str, tempMap[n-edgeWidth:n+edgeWidth+1]))])
             n += 1
+
         tempMap = [0]*edgeWidth + processedMap + [0]*edgeWidth
         plotMap = np.vstack((plotMap, processedMap))
 
@@ -81,6 +85,7 @@ def apply_rules(worldMap,rules,windowLength):
 def voting(processedMap,votingMethod):
 
     if votingMethod == 'equal_split':
+
         l = int(len(processedMap)/2) #assumes the worldWith is even
         sumHead = sum(processedMap[0:l]) #TO-DO, check if this gives correct output,
         sumTail = sum(processedMap[l:])
@@ -107,6 +112,7 @@ def evolve(parents, cutSize, breedType, operator, crossoverRatio):
     mutationParents = []
 
     if operator == 'deterministically':
+
         crossoverParents = parents[:int((len(parents)*crossoverRatio))]
         mutationParents = parents[(int(len(parents)*crossoverRatio)):]
 
@@ -133,6 +139,7 @@ def evolve(parents, cutSize, breedType, operator, crossoverRatio):
             n += 1
 
         offspring.append(''.join(parentGenome))
+
         i += 1
 
     i = 0
