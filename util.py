@@ -1,4 +1,3 @@
-from pylab import *
 import numpy as np
 import random
 
@@ -17,7 +16,11 @@ def initialize_rules(windowLength,genome):
 
     conditionList = []
     responseList = []
-    binaryString = format(genome, ('0' + str(2**windowLength) + 'b'))
+    binaryString = genome
+
+    if isinstance(genome, int):
+        binaryString = format(genome, ('0' + str(2**windowLength) + 'b'))
+
     n = 0
 
     for _ in range(2**windowLength):
@@ -76,8 +79,6 @@ def apply_rules(worldMap,rules,windowLength):
         tempMap = [0]*edgeWidth + processedMap + [0]*edgeWidth
         plotMap = np.vstack((plotMap, processedMap))
 
-    #print(plotMap)
-
     return processedMap
 
 
@@ -94,14 +95,11 @@ def voting(processedMap,votingMethod):
             return int(random.randint(0,1)) #randomly gives 0 or 1 of there is a tie
         if sumHead > sumTail:
             return 0
-        else:
-            return 1
 
-    return 0 #WIP
+    return 1
 
 
 
-#takes in a list parents as [genome,fitness]
 def evolve(parents, cutSize, breedType, operator, crossoverRatio):
 
     parents = list(dict(list(parents.items())[int(len(parents)*(1-cutSize)):]).keys())

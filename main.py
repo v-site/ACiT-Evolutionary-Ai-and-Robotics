@@ -7,7 +7,7 @@ env = gym.make("CartPole-v1")  #render_mode = 'human' (graphical)
 observation, info = env.reset() #(seed=42) If sample() is to be used to randomize the actionspace, env.reset needs to be seeded for repeatability
 
 #initiate CA world
-worldWidth = 16 #must be even number
+worldWidth = 16 #should be even number
 windowLength = 5 #must be odd (3 gives a genome length of 8 bit, 5; 32, 7, 125, 9, 256, 12, 1024)
 votingMethod = 'equal_split'
 maxSteps = 200 #this allows the genom to respawn, if the simulation is terminated
