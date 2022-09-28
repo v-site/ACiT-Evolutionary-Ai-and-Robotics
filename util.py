@@ -96,7 +96,7 @@ def voting(processedMap,votingMethod):
         if sumHead > sumTail:
             return 0
 
-    return 1
+    return 1 # Unless if, return 1
 
 
 
