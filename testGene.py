@@ -4,12 +4,12 @@ import util
 env = gym.make("CartPole-v1", render_mode = 'human')
 observation, info = env.reset()
 
-genome = '01100110'
+genome = '11111100101011011001101001011001'
 
 worldWidth = 16
 windowLength = len(list(format(len(list(genome)),'b')))-1
 votingMethod = 'equal_split'
-maxSteps = 200
+maxSteps = 500
 
 genomeReward = 0
 genomeEpisodes = 0
