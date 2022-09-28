@@ -1,20 +1,39 @@
 import numpy as np
 import random
+from operator import itemgetter
 
-def get_action(worldWidth, angel, windowLength, votingMethod, genome):
+def generate_initial_batch(batchSize, windowLength):
+
+    parentGenomes = []
+
+    for _ in range(batchSize):
+        genome = random.randint(0, 2**(2**windowLength)-1) #must be less or equal to 2**(2**windowLength)-1 (for windowlength of 3, genome = (0,255))
+        parentGenomes.append(format(genome, ('0' + str(2**windowLength) + 'b')))
+  
+    return parentGenomes
+
+
+
+def get_action(worldWidth, angel, windowLength, votingMethod, rules, iterations):
 
     worldMap = initialize_window(worldWidth, angel)
-    rules = initialize_rules(windowLength,genome)
-    processedMap = apply_rules(worldMap,rules,windowLength)
+    processedMap = apply_rules(worldMap,rules,windowLength,iterations)
     action = voting(processedMap,votingMethod)
 
     return action
 
+def set_condition_list(windowLength):
+    conditionList = []
+    n = 0
 
+    for n in range(2**windowLength):
+        # Appends n in binary format to list of conditions
+        conditionList.append(format(n, ('0' + str(windowLength) + 'b')))
+        n += 1
+    return conditionList
 
 def initialize_rules(windowLength,genome):
-
-    conditionList = []
+    
     responseList = []
     binaryString = genome
 
@@ -28,15 +47,8 @@ def initialize_rules(windowLength,genome):
         responseList.append(int(binaryString[n]))
         n += 1
 
-    n = 0
-
-    for n in range(2**windowLength):
-        # Appends n in binary format to list of conditions
-        conditionList.append(format(n, ('0' + str(windowLength) + 'b')))
-        n += 1
-
     # Merges the list of conditions with the list of responses
-    return dict(zip(conditionList, responseList))
+    return responseList
 
 
 
@@ -60,13 +72,13 @@ def initialize_window(worldWidth, angel):
 
 
 
-def apply_rules(worldMap,rules,windowLength):
+def apply_rules(worldMap,rules,windowLength,iterations):
 
     edgeWidth = int((windowLength-1)/2)
     tempMap = [0]*edgeWidth + worldMap + [0]*edgeWidth
     plotMap = worldMap
 
-    for _ in range(len(worldMap)):
+    for _ in range(iterations):
 
         processedMap = []
         n = edgeWidth
@@ -102,20 +114,24 @@ def voting(processedMap,votingMethod):
 
 def evolve(parents, cutSize, breedType, operator, crossoverRatio):
 
-    parents = list(dict(list(parents.items())[int(len(parents)*(1-cutSize)):]).keys())
-    print('winners \n', parents, '\n')
-
+    #parents = np.array(parents)[-int(len(parents)*(cutSize)):]
+    parents = list(map(itemgetter(0), parents))[int(len(parents)*(1-cutSize)):]
+    #print('winners \n', parents, '\n')
+    #print(parents)
     offspring = [] #initiate offspring list
     crossoverParents = []
     mutationParents = []
 
     if operator == 'deterministically':
 
-        crossoverParents = parents[:int((len(parents)*crossoverRatio))]
-        mutationParents = parents[(int(len(parents)*crossoverRatio)):]
+        #crossoverParents = parents[:int((len(parents)*crossoverRatio))]
+        #mutationParents = parents[(int(len(parents)*crossoverRatio)):]
 
-        print('crosParent \n', crossoverParents, '\n')
-        print('mutParent \n', mutationParents, '\n')
+        crossoverParents = parents
+        mutationParents = parents
+
+        #print('crosParent \n', crossoverParents, '\n')
+        #print('mutParent \n', mutationParents, '\n')
 
     i = 0
     n = 0
@@ -142,48 +158,39 @@ def evolve(parents, cutSize, breedType, operator, crossoverRatio):
 
     i = 0
 
-    if breedType == 'one-point-crossover': #parent genome split in two and added together
+    #if breedType == 'one-point-crossover': #parent genome split in two and added together
 
-        for i in range(int(len(crossoverParents)/2)):
+    for i in range(int(len(crossoverParents)/2)):
 
-            p1 = list(crossoverParents[i])
-            p2 = list(crossoverParents[i+1])
+        p1 = list(crossoverParents[i])
+        p2 = list(crossoverParents[i+1])
 
-            c = p1[:int(len(p1)/2)]+p2[int(len(p2)/2):]
+        #All parents get two offsprings
+        c1 = p1[:int(len(p1)/2)] + p2[int(len(p2)/2):] #creates the first offspring
+        c2 = p1[:int(len(p2)/2)] + p2[int(len(p1)/2):] #creates the second offspring
+        offspring.append(''.join(c1))
+        offspring.append(''.join(c2))
 
-            offspring.append(''.join(c))
-
-            i += 2
-
-    i = 0
-
-    if breedType == 'two-point-crossover': #parent genome split in three and added together
-
-        for i in range(int(len(crossoverParents)/2)):
-
-            p1 = list(crossoverParents[i])
-            p2 = list(crossoverParents[i+1])
-
-            #add variable to control the split
-            c = p1[:int(len(p1)*0.25)]+p2[int(len(p2)*0.25):int(len(p2)*0.75)]+p1[int(len(p1)*0.75):]
-
-            offspring.append(''.join(c))
-
-            i += 2
+        i += 2
 
     i = 0
 
-    if breedType == 'end-cross-over': #parent genome split in two and added together
+    #if breedType == 'two-point-crossover': #parent genome split in three and added together
 
-        for i in range(int(len(crossoverParents)/2)):
+    for i in range(int(len(crossoverParents)/2)):
 
-            p1 = list(crossoverParents[i])
-            p2 = list(crossoverParents[i+1])
+        p1 = list(crossoverParents[i])
+        p2 = list(crossoverParents[i+1])
 
-            c = None
+        #add variable to control the split
+        c1 = p1[:int(len(p1)*0.25)]+p2[int(len(p2)*0.25):int(len(p2)*0.75)]+p1[int(len(p1)*0.75):]
+        c2 = p1[:int(len(p2)*0.25)]+p1[int(len(p1)*0.25):int(len(p1)*0.75)]+p2[int(len(p2)*0.75):]
 
-            offspring.append(''.join(c))
+        offspring.append(''.join(c1))
+        offspring.append(''.join(c2))
 
-            i += 2
+        i += 2
+
+    offspring += parents # Live to fight another day
 
     return offspring
