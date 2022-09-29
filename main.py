@@ -1,6 +1,5 @@
 import gym
 import util
-import random
 import numpy as np
 from timeit import default_timer as timer # Supposedly more better :))
 from operator import itemgetter
@@ -15,14 +14,12 @@ windowLength = 5 #must be odd (3 gives a genome length of 8 bit (2^3), 5; 32, 7;
 votingMethod = 'equal_split'
 iterations = 5
 maxSteps = 200 #this allows the genom to respawn, if the simulation is terminated
-batchSize = 50 #should be divisible by crossover ratio
+batchSize = 100 #should be divisible by crossover ratio
 
 epochs = 100 # defines the ammounts of epochs for the evolutionary algorithm
 
 parentGenomes = util.generate_initial_batch(batchSize, windowLength) #0.13 ms
-
 conditionList = util.set_condition_list(windowLength) #0.022 ms
-
 
 epochPerformance = []
 startTime = timer()
@@ -31,6 +28,7 @@ avgSimTime = []
 #observer
 eCounter = 0
 for _ in range(epochs):
+
     eCounter += 1
     n = 0
     parentResults = []
@@ -62,14 +60,14 @@ for _ in range(epochs):
 
     avgSimTime.append(round((timer()-t)*1000/batchSize, 1))
 
-    for i in range(batchSize):
-        parents.append([parentGenomes[i], parentResults[i]])
+    for n in range(batchSize):
+        parents.append([parentGenomes[n], parentResults[n]])
 
     parents = sorted(parents, key=itemgetter(1))
 
     env.close()
 
-    parentGenomes = util.evolve(parents, 0.2, 0.8)
+    parentGenomes = util.evolve(parents, 0.2, 'uniform')
 
     parentGenomes += (util.generate_initial_batch(batchSize-len(parentGenomes), windowLength)) #add random genoms to satisfy batch size
 
@@ -82,5 +80,5 @@ for _ in range(epochs):
     #if maxReward > 99:
         #print(parents[-1])
 
-#print(parents)
+print(parents)
 print('average time per genome ', np.average(avgSimTime), 'ms')
