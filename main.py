@@ -2,7 +2,7 @@ import gym
 import util
 import random
 import numpy as np
-from timeit import default_timer as timer
+from timeit import default_timer as timer # Supposedly more better :))
 from operator import itemgetter
 
 #initate
@@ -19,9 +19,11 @@ batchSize = 50 #should be divisible by crossover ratio
 
 epochs = 100 # defines the ammounts of epochs for the evolutionary algorithm
 
-parentGenomes = util.generate_initial_batch(batchSize, windowLength)
-#print(parentGenomes)
-conditionList = util.set_condition_list(windowLength)
+parentGenomes = util.generate_initial_batch(batchSize, windowLength) #0.13 ms
+
+conditionList = util.set_condition_list(windowLength) #0.022 ms
+
+
 epochPerformance = []
 startTime = timer()
 
@@ -39,11 +41,12 @@ for _ in range(epochs):
         genomeEpisodes = 1 #number of episodes within the maxSteps
         genomeReward = 0 #accumulative reward over maxSteps
 
-        rules = dict(zip(conditionList, util.initialize_rules(windowLength,parentGenomes[n])))
+        rules = dict(zip(conditionList, util.initialize_rules(windowLength,parentGenomes[n]))) #0.01-0.02 ms
 
         for _ in range(maxSteps):
-            action = util.get_action(worldWidth, observation[2], windowLength, votingMethod, rules, iterations)
-            observation, reward, terminated, truncated, info = env.step(action)
+
+            action = util.get_action(worldWidth, observation[2], windowLength, votingMethod, rules, iterations) # 0.16-0.22 ms (this is by far the longest runner, and it gets performed 200 times at a time)
+            observation, reward, terminated, truncated, info = env.step(action) # 0.015-0.02ms (can't realy do anything about this one)
             genomeReward += 1
 
             if terminated or truncated:
@@ -53,6 +56,8 @@ for _ in range(epochs):
         n += 1
 
         parentResults.append(round(genomeReward/genomeEpisodes, 1))
+
+################################ VVV only run once per epoch, don't care (0.2ms) VVV #########################################################
 
     for n in range(batchSize):
         parents.append([parentGenomes[n], parentResults[n]])
@@ -74,5 +79,4 @@ for _ in range(epochs):
     #if maxReward > 99:
         #print(parents[-1])
 
-
-print(parents)
+#print(parents)
