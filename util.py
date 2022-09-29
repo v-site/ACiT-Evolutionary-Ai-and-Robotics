@@ -9,7 +9,7 @@ def generate_initial_batch(batchSize, windowLength):
     for _ in range(batchSize):
         genome = random.randint(0, 2**(2**windowLength)-1) #must be less or equal to 2**(2**windowLength)-1 (for windowlength of 3, genome = (0,255))
         parentGenomes.append(format(genome, ('0' + str(2**windowLength) + 'b')))
-  
+
     return parentGenomes
 
 
@@ -22,6 +22,8 @@ def get_action(worldWidth, angel, windowLength, votingMethod, rules, iterations)
 
     return action
 
+
+
 def set_condition_list(windowLength):
     conditionList = []
     n = 0
@@ -32,8 +34,10 @@ def set_condition_list(windowLength):
         n += 1
     return conditionList
 
+
+
 def initialize_rules(windowLength,genome):
-    
+
     responseList = []
     binaryString = genome
 

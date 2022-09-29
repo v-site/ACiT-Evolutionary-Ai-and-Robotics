@@ -2,7 +2,7 @@ import gym
 import util
 import random
 import numpy as np
-import time
+from timeit import default_timer as timer
 from operator import itemgetter
 
 #initate
@@ -17,13 +17,13 @@ iterations = 5
 maxSteps = 200 #this allows the genom to respawn, if the simulation is terminated
 batchSize = 50 #should be divisible by crossover ratio
 
-epochs = 200 # defines the ammounts of epochs for the evolutionary algorithm
+epochs = 100 # defines the ammounts of epochs for the evolutionary algorithm
 
 parentGenomes = util.generate_initial_batch(batchSize, windowLength)
 #print(parentGenomes)
 conditionList = util.set_condition_list(windowLength)
 epochPerformance = []
-startTime = time.time()
+startTime = timer()
 
 #observer
 eCounter = 0
@@ -32,6 +32,7 @@ for _ in range(epochs):
     n = 0
     parentResults = []
     parents = []
+    t = timer()
 
     for _ in range(batchSize):
 
@@ -39,7 +40,7 @@ for _ in range(epochs):
         genomeReward = 0 #accumulative reward over maxSteps
 
         rules = dict(zip(conditionList, util.initialize_rules(windowLength,parentGenomes[n])))
-        
+
         for _ in range(maxSteps):
             action = util.get_action(worldWidth, observation[2], windowLength, votingMethod, rules, iterations)
             observation, reward, terminated, truncated, info = env.step(action)
@@ -51,25 +52,27 @@ for _ in range(epochs):
 
         n += 1
 
-        parentResults.append(round(genomeReward/genomeEpisodes, 2))
-    
+        parentResults.append(round(genomeReward/genomeEpisodes, 1))
+
     for n in range(batchSize):
         parents.append([parentGenomes[n], parentResults[n]])
 
     parents = sorted(parents, key=itemgetter(1))
-    
+
     env.close()
 
     parentGenomes = util.evolve(parents, 0.2, 'one-point-crossover', 'deterministically', 0.8)
 
     parentGenomes += (util.generate_initial_batch(batchSize-len(parentGenomes), windowLength)) #add random genoms to satisfy batch size
-    
-    epochPerformance.append(round(np.average(parentResults), 2))
-    maxReward = list(map(itemgetter(1), parents))[-1]
-    print(f"Generation: {eCounter} maxR: {list(map(itemgetter(1), parents))[-1]} avgR {round(np.average(parentResults), 2)} dT: {round(time.time()-startTime, 2)}")
-    if maxReward > 99:
-        print(f"Generation: {eCounter} maxR: {list(map(itemgetter(1), parents))[-1]} avgR {round(np.average(parentResults), 2)} dT: {round(time.time()-startTime, 2)}")
-        print(parents[-1])
-        
+
+    epochPerformance.append(round(np.average(parentResults), 1))
+
+    #maxReward = list(map(itemgetter(1), parents))[-1]
+
+    print(f"Gen: {str(eCounter).zfill(3)} maxR: {list(map(itemgetter(1), parents))[-1]} avgR {round(np.average(parentResults), 1)} dT: {round(timer()-startTime, 1)} aT: {round((timer()-t)*1000/batchSize, 1)}ms")
+
+    #if maxReward > 99:
+        #print(parents[-1])
+
 
 print(parents)
