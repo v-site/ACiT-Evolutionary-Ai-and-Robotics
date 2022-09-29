@@ -29,7 +29,7 @@ def set_condition_list(windowLength):
 
 def get_action(worldWidth, angel, windowLength, votingMethod, rules, iterations):
 
-    worldMap = initialize_window(worldWidth, angel) #slower
+    worldMap = initialize_window(worldWidth, angel) #meh
 
     processedMap = apply_rules(worldMap,rules,windowLength,iterations) #slow
 
@@ -83,7 +83,8 @@ def apply_rules(worldMap,rules,windowLength,iterations):
 
     edgeWidth = int((windowLength-1)/2)
     tempMap = [0]*edgeWidth + worldMap + [0]*edgeWidth
-    plotMap = worldMap
+
+    t1=timer()
 
     for _ in range(iterations):
 
@@ -96,7 +97,8 @@ def apply_rules(worldMap,rules,windowLength,iterations):
             n += 1
 
         tempMap = [0]*edgeWidth + processedMap + [0]*edgeWidth
-        plotMap = np.vstack((plotMap, processedMap))
+
+    #print(round((timer()-t1)*1000, 3))
 
     return processedMap
 
@@ -119,33 +121,19 @@ def voting(processedMap,votingMethod):
 
 
 
-def evolve(parents, cutSize, breedType, operator, crossoverRatio):
+def evolve(parents, cutSize, crossoverRatio):
 
     #parents = np.array(parents)[-int(len(parents)*(cutSize)):]
     parents = list(map(itemgetter(0), parents))[int(len(parents)*(1-cutSize)):]
-    #print('winners \n', parents, '\n')
     #print(parents)
     offspring = [] #initiate offspring list
-    crossoverParents = []
-    mutationParents = []
-
-    if operator == 'deterministically':
-
-        #crossoverParents = parents[:int((len(parents)*crossoverRatio))]
-        #mutationParents = parents[(int(len(parents)*crossoverRatio)):]
-
-        crossoverParents = parents
-        mutationParents = parents
-
-        #print('crosParent \n', crossoverParents, '\n')
-        #print('mutParent \n', mutationParents, '\n')
 
     i = 0
     n = 0
 
-    for i in range(len(mutationParents)):
+    for i in range(len(parents)):
 
-        parentGenome = list(mutationParents[i])
+        parentGenome = list(parents[i])
 
         for n in range(len(parentGenome)):
 
@@ -167,10 +155,10 @@ def evolve(parents, cutSize, breedType, operator, crossoverRatio):
 
     #if breedType == 'one-point-crossover': #parent genome split in two and added together
 
-    for i in range(int(len(crossoverParents)/2)):
+    for i in range(int(len(parents)/2)):
 
-        p1 = list(crossoverParents[i])
-        p2 = list(crossoverParents[i+1])
+        p1 = list(parents[i])
+        p2 = list(parents[i+1])
 
         #All parents get two offsprings
         c1 = p1[:int(len(p1)/2)] + p2[int(len(p2)/2):] #creates the first offspring
@@ -184,10 +172,10 @@ def evolve(parents, cutSize, breedType, operator, crossoverRatio):
 
     #if breedType == 'two-point-crossover': #parent genome split in three and added together
 
-    for i in range(int(len(crossoverParents)/2)):
+    for i in range(int(len(parents)/2)):
 
-        p1 = list(crossoverParents[i])
-        p2 = list(crossoverParents[i+1])
+        p1 = list(parents[i])
+        p2 = list(parents[i+1])
 
         #add variable to control the split
         c1 = p1[:int(len(p1)*0.25)]+p2[int(len(p2)*0.25):int(len(p2)*0.75)]+p1[int(len(p1)*0.75):]

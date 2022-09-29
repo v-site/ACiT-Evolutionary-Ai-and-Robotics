@@ -26,6 +26,7 @@ conditionList = util.set_condition_list(windowLength) #0.022 ms
 
 epochPerformance = []
 startTime = timer()
+avgSimTime = []
 
 #observer
 eCounter = 0
@@ -59,14 +60,16 @@ for _ in range(epochs):
 
 ################################ VVV only run once per epoch, don't care (0.2ms) VVV #########################################################
 
-    for n in range(batchSize):
-        parents.append([parentGenomes[n], parentResults[n]])
+    avgSimTime.append(round((timer()-t)*1000/batchSize, 1))
+
+    for i in range(batchSize):
+        parents.append([parentGenomes[i], parentResults[i]])
 
     parents = sorted(parents, key=itemgetter(1))
 
     env.close()
 
-    parentGenomes = util.evolve(parents, 0.2, 'one-point-crossover', 'deterministically', 0.8)
+    parentGenomes = util.evolve(parents, 0.2, 0.8)
 
     parentGenomes += (util.generate_initial_batch(batchSize-len(parentGenomes), windowLength)) #add random genoms to satisfy batch size
 
@@ -74,9 +77,10 @@ for _ in range(epochs):
 
     #maxReward = list(map(itemgetter(1), parents))[-1]
 
-    print(f"Gen: {str(eCounter).zfill(3)} maxR: {list(map(itemgetter(1), parents))[-1]} avgR {round(np.average(parentResults), 1)} dT: {round(timer()-startTime, 1)} aT: {round((timer()-t)*1000/batchSize, 1)}ms")
+    print(f"Gen: {str(eCounter).zfill(3)} maxR: {list(map(itemgetter(1), parents))[-1]} avgR {round(np.average(parentResults), 1)} dT: {round(timer()-startTime, 1)} aT: {avgSimTime[eCounter-1]}ms")
 
     #if maxReward > 99:
         #print(parents[-1])
 
 #print(parents)
+print('average time per genome ', np.average(avgSimTime), 'ms')
