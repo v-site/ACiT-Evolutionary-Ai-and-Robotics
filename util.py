@@ -17,12 +17,11 @@ def generate_initial_batch(batchSize, windowLength):
 
 def set_condition_list(windowLength):
     conditionList = []
-    n = 0
 
     for n in range(2**windowLength):
         # Appends n in binary format to list of conditions
         conditionList.append(format(n, ('0' + str(windowLength) + 'b')))
-        n += 1
+
     return conditionList
 
 
@@ -44,16 +43,14 @@ def initialize_window(worldWidth, angel):
     minAngle = -0.2095
     maxAngle =  0.2095
     worldMap = []
-    n = 0
 
     # Maps the angle to a value between zero and the maximum binary worldwidth and converts to binary string
     binaryString = format(int(np.interp(angel, [minAngle, maxAngle], [0,2**worldWidth])), ('0' + str(worldWidth) + 'b'))
 
-    for _ in range(worldWidth):
+    for n in range(worldWidth):
 
         # Appends the each character in the binary string as an int to the worldMap array
         worldMap.append(int(binaryString[n]))
-        n += 1
 
     return worldMap
 
