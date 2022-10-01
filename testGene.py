@@ -4,7 +4,7 @@ import util
 env = gym.make("CartPole-v1", render_mode = 'human')
 observation, info = env.reset()
 
-genome = '11111100101011011001101001011001'
+genome = '11110000100111000100100111000000'
 
 worldWidth = 16
 windowLength = len(list(format(len(list(genome)),'b')))-1
@@ -15,7 +15,7 @@ genomeReward = 0
 genomeEpisodes = 0
 
 for _ in range(maxSteps):
-    action = util.get_action(worldWidth, observation[2], windowLength, votingMethod, genome)
+    action = util.get_action(worldWidth, observation[2], windowLength, votingMethod, genome,iterations=5)
     observation, reward, terminated, truncated, info = env.step(action)
     genomeReward += 1
 

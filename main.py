@@ -8,6 +8,8 @@ from operator import itemgetter
 #initate
 env = gym.make("CartPole-v1")  #render_mode = 'human' (graphical)
 observation, info = env.reset() #(seed=42) If sample() is to be used to randomize the actionspace, env.reset needs to be seeded for repeatability
+learningTreshold = 0.05
+patience = 5
 
 #initiate CA world
 worldWidth = 16 #should be even number
@@ -25,13 +27,14 @@ conditionList = util.set_condition_list(windowLength)
 epochPerformance = []
 startTime = time.time()
 
+
 #observer
 eCounter = 0
 for _ in range(epochs):
     eCounter += 1
     n = 0
-    parentResults = []
-    parents = []
+    parentResults = np.array()
+    parents = np.array()
 
     for _ in range(batchSize):
 
@@ -71,5 +74,10 @@ for _ in range(epochs):
         print(f"Generation: {eCounter} maxR: {list(map(itemgetter(1), parents))[-1]} avgR {round(np.average(parentResults), 2)} dT: {round(time.time()-startTime, 2)}")
         print(parents[-1])
         
+    #early stop based on average performance?
+    if epochs > patience:
+        avgLearningRate = np.average(np.diff(parents[:patience]))
+        if avgLearningRate < learningTreshold:
+            break
 
 print(parents)
