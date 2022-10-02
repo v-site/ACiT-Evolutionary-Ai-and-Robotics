@@ -1,14 +1,16 @@
 import gym
+from lightgbm import early_stopping
 import util
 import numpy as np
 from timeit import default_timer as timer # Supposedly more better :))
 from operator import itemgetter
+import time
 
 #initate
 env = gym.make("CartPole-v1")  #render_mode = 'human' (graphical)
 observation, info = env.reset() #(seed=42) If sample() is to be used to randomize the actionspace, env.reset needs to be seeded for repeatability
 learningTreshold = 0.05
-patience = 5
+patience = 10
 
 #initiate CA world
 worldWidth = 16 #should be even number
@@ -35,8 +37,8 @@ for _ in range(epochs):
     eCounter += 1
     n = 0
 
-    parentResults = np.array()
-    parents = np.array()
+    parentResults = []
+    parents = []
 
 
     t = timer()
@@ -66,10 +68,10 @@ for _ in range(epochs):
 ################################ VVV only run once per epoch, don't care (0.2ms) VVV #########################################################
 
     avgSimTime.append(round((timer()-t)*1000/batchSize, 1))
-
+        
     for n in range(batchSize):
         parents.append([parentGenomes[n], parentResults[n]])
-
+        
     parents = sorted(parents, key=itemgetter(1))
 
     env.close()
@@ -79,16 +81,20 @@ for _ in range(epochs):
     parentGenomes += (util.generate_initial_batch(batchSize-len(parentGenomes), windowLength)) #add random genoms to satisfy batch size
     
     epochPerformance.append(round(np.average(parentResults), 2))
+
     maxReward = list(map(itemgetter(1), parents))[-1]
+
     print(f"Generation: {eCounter} maxR: {list(map(itemgetter(1), parents))[-1]} avgR {round(np.average(parentResults), 2)} dT: {round(time.time()-startTime, 2)}")
+
     if maxReward > 99:
         print(f"Generation: {eCounter} maxR: {list(map(itemgetter(1), parents))[-1]} avgR {round(np.average(parentResults), 2)} dT: {round(time.time()-startTime, 2)}")
         print(parents[-1])
         
     #early stop based on average performance?
-    if epochs > patience:
-        avgLearningRate = np.average(np.diff(parents[:patience]))
-        if avgLearningRate < learningTreshold:
+    if (eCounter > patience) and learningTreshold:
+        avgLearningRate = np.average(np.diff(parentResults[-patience:]))
+        print(f"learning th: {learningTreshold}, based on {parentResults[-patience:]}, avg learning rate: {avgLearningRate}")
+        if abs(avgLearningRate) < abs(learningTreshold):    
             break
 
 
