@@ -2,6 +2,18 @@ import numpy as np
 import random
 from operator import itemgetter
 from timeit import default_timer as timer # Supposedly more better :))
+import yaml
+from yaml.loader import SafeLoader
+
+
+#initiate: 
+def get_config():
+    with open('config.yml') as f:
+        data = yaml.load(f, Loader=SafeLoader)
+        return data
+
+config = get_config()
+
 
 def generate_initial_batch(batchSize, windowLength):
 
@@ -99,24 +111,27 @@ def apply_rules(worldMap,rules,windowLength,iterations):
 
 
 def voting(processedMap,votingMethod):
+    match votingMethod:
+        case 'equal_split':
+            l = int(len(processedMap)/2) #assumes the worldWith is even
+            sumHead = sum(processedMap[0:l]) #TO-DO, check if this gives correct output,
+            sumTail = sum(processedMap[l:])
 
-    if votingMethod == 'equal_split':
-
-        l = int(len(processedMap)/2) #assumes the worldWith is even
-        sumHead = sum(processedMap[0:l]) #TO-DO, check if this gives correct output,
-        sumTail = sum(processedMap[l:])
-
-        if sumHead == sumTail:
-            return int(random.randint(0,1)) #randomly gives 0 or 1 of there is a tie
-        if sumHead > sumTail:
-            return 0
-
+            if sumHead == sumTail:
+                return int(random.randint(0,1)) #randomly gives 0 or 1 of there is a tie
+            if sumHead > sumTail:
+                return 0
+                
+        case 'majority':
+            if processedMap.count('1')<= processedMap.count('0'):
+                
+                return 0
     return 1 # Unless if, return 1
 
 
 
 def evolve(parents, cutSize, breedType):
-
+    #TO-DO: 
     parents = list(map(itemgetter(0), parents))[int(len(parents)*(1-cutSize)):]
 
     Pn = len(parents) #number of parents
@@ -130,7 +145,7 @@ def evolve(parents, cutSize, breedType):
 
         for n in range(Pl):
 
-            if  random.random() <= 0.1:
+            if  random.random() <= config['mutationRatio']:
 
                 if parentGenome[n] == '1':
 
@@ -168,7 +183,7 @@ def evolve(parents, cutSize, breedType):
             offspring.append(''.join(c1))
             #offspring.append(''.join(c2))
 
-    if breedType == 'uniform': #parent genome split in three and added together
+    if breedType == 'uniform': #randomly insert genom-element from each of the parents 
 
         for i in range(int(Pn)):
 

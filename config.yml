@@ -1,0 +1,31 @@
+#Hyper paramaters
+#global
+seed: null
+
+#CA_world_parameters:
+worldWith: 10 #
+windowLength: 5 #neigbourhood, must be odd (3 gives a genome length of 8 bit (2^3), 5; 32, 7; 128, 9; 256, 12; 1024)
+
+#simulation parameters
+epochs: 100 # defines the ammounts of epochs for the evolutionary algorithm
+maxSteps: 300 #this allows the genom to respawn, if the simulation is terminated
+populationSize: 100 #should be divisible by crossover ratio
+
+#CA_action
+iterations: 6 #Iterations over the search window, before action is taken 
+
+#evolving parameters:
+breedType: 'uniform' # ['one-point', 'two-point',  'uniform']
+votingMethod: 'equal_split' # ['majority', 'equal_split']
+mutationRatio: 0.01
+cutSize: 0.2 #the elite of the
+
+
+#TO-DO: after
+  #change the fitness-function: abort run when fail, give CA x attempts. Rewards = best or avg of runs
+  #impolement emtpy cells between the different info-elements, these beeing pole-angle, and posion
+  #define chucnks, to deivde the information that is passed to the CA from the cartPole 
+  #implement turnament selection, so the whole pop gets the oppurtunity to reproduce
+  #reduce the ammount of elites to around 5-10%
+  #random chould be less tehn 10%
+  #use the intier population to reproduce, use turnament selection
