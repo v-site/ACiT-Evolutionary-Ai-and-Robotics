@@ -4,9 +4,9 @@ from operator import itemgetter
 from timeit import default_timer as timer # Supposedly more better :))
 import yaml
 from yaml.loader import SafeLoader
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
-#initiate: 
+#initiate:
 def get_config():
     with open('config.yml') as f:
         data = yaml.load(f, Loader=SafeLoader)
@@ -55,7 +55,7 @@ def get_action(worldWidth, observation, windowSpacing, windowLength, votingMetho
 def initialize_window(worldWidth, observation, windowSpacing):
 
     #https://www.gymlibrary.dev/environments/classic_control/cart_pole/
-    
+
     # [CoartPos, CartVel, PoleAngle, PoleAngleVel]
 
     minVals = [ -2.4, -4, -0.2095, -4]
@@ -72,8 +72,8 @@ def initialize_window(worldWidth, observation, windowSpacing):
             if n == flipper:
                 worldMap.append(1)
             else:
-                worldMap.append(0) 
-        
+                worldMap.append(0)
+
         for n in range(windowSpacing):
             worldMap.append(0)
 
@@ -134,17 +134,17 @@ def voting(processedMap,votingMethod):
                 return int(random.randint(0,1)) #randomly gives 0 or 1 of there is a tie
             if sumHead > sumTail:
                 return 0
-                
+
         case 'majority':
             if processedMap.count('1')<= processedMap.count('0'):
-                
+
                 return 0
     return 1 # Unless if, return 1
 
 
 
 def evolve(parents, cutSize, breedType):
-    #TO-DO: 
+    #TO-DO:
     parents = list(map(itemgetter(0), parents))[int(len(parents)*(1-cutSize)):]
 
     Pn = len(parents) #number of parents
@@ -196,7 +196,7 @@ def evolve(parents, cutSize, breedType):
             offspring.append(''.join(c1))
             #offspring.append(''.join(c2))
 
-    if breedType == 'uniform': #randomly insert genom-element from each of the parents 
+    if breedType == 'uniform': #randomly insert genom-element from each of the parents
 
         for i in range(int(Pn)):
 
@@ -220,24 +220,30 @@ def evolve(parents, cutSize, breedType):
 
     return offspring
 
-def plot(generationList):
-    #inputs= generations[[genMax, genAverage], [genomeResults]]
-    for _ in range(generationList):
-        plt.plot()
-    
+
+
+def plot(maxReward,avgReward,generationList):
+    #inputs= generations[genMax, genAverage, [genomeResults]]
+    #for i in range(len(generationList)):
+    plt.plot(maxReward)
+    plt.plot(avgReward)
+
+    for i in range(len(generationList)):
+        plt.scatter([i]*len(generationList[i]), generationList[i])
+
     #x_values = generations (this is the index in the )
-    #y_values: 
-    if model != None:
-        predictions = pd.DataFrame(model.predict(x_test))
-        predictions = predictions.set_index(x_test.index.to_frame()['DateTime'])
-        plt.plot(predictions, label='Predictions')
-        plt.plot(predictions.rolling(60).mean().fillna(0), label='SMA60_Predictions')
-    for column in x_test.columns.values:
-        plt.plot(x_test[column], label=column)
-    
-    plt.plot(y_test, label='Truth')
+    #y_values:
+#    if model != None:
+#        predictions = pd.DataFrame(model.predict(x_test))
+#        predictions = predictions.set_index(x_test.index.to_frame()['DateTime'])
+#        plt.plot(predictions, label='Predictions')
+#        plt.plot(predictions.rolling(60).mean().fillna(0), label='SMA60_Predictions')
+#    for column in x_test.columns.values:
+#        plt.plot(x_test[column], label=column)
+
+#    plt.plot(y_test, label='Truth')
     #plt.plot(y_test.rolling(60).mean().fillna(0), label = "SMA60_truth")
     #plt.plot(y_test.rolling(10).mean().fillna(0), label = "SMA10_truth")
-    
-    plt.legend()
+
+#    plt.legend()
     plt.show()
