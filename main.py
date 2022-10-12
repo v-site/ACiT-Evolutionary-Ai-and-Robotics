@@ -62,7 +62,7 @@ for _ in range(generations):
 
                 action = util.get_action(worldWidth, observation, config['windowSpacing'], windowLength, votingMethod, rules, iterations) # 0.16-0.22 ms (this is by far the longest runner, and it gets performed 200 times at a time)
                 observation, reward, terminated, truncated, info = env.step(action) # 0.015-0.02ms (can't realy do anything about this one)
-                totReward += reward - abs(observation[0])
+                totReward += reward - abs(observation[0])/2.4
                 #print(f"cart velocity: {observation[1]}, pole vel: {observation[3]}")
                 if terminated or truncated:
                     observation, info = env.reset()
@@ -73,7 +73,7 @@ for _ in range(generations):
         #print(f"avg genome reward: {avgGenomeReward}")
         parentResults.append(avgGenomeReward)
 
-################################ VVV only run once per epoch, don't care (0.2ms) VVV #########################################################
+################################ VVV only run once per epoch, don't 5care (0.2ms) VVV #########################################################
 
     avgSimTime.append(round((timer()-t)*1000/popSize, 1))
 
@@ -88,10 +88,15 @@ for _ in range(generations):
 
     parentGenomes += (util.generate_initial_batch(popSize-len(parentGenomes), windowLength)) #add random genoms to satisfy batch size
 
+
+
     maxReward.append(list(map(itemgetter(1), parents))[-1])
+
     avgReward.append(round(np.average(parentResults), 1))
 
     generationList.append(parentResults)
+
+
 
     #print(f"Generation: {eCounter} maxR: {list(map(itemgetter(1), parents))[-1]} avgR {round(np.average(parentResults), 2)} dT: {round(time.time()-startTime, 2)}")
 
@@ -114,6 +119,6 @@ for _ in range(generations):
         #print(parents[-1])
 
 #print(parents)
-print('average time per genome ', np.average(avgSimTime), 'ms')
+print('average time per genome ', round(np.average(avgSimTime), 2), 'ms')
 
 util.plot(maxReward,avgReward,generationList)

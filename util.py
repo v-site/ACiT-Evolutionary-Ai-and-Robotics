@@ -223,27 +223,14 @@ def evolve(parents, cutSize, breedType):
 
 
 def plot(maxReward,avgReward,generationList):
-    #inputs= generations[genMax, genAverage, [genomeResults]]
-    #for i in range(len(generationList)):
-    plt.plot(maxReward)
-    plt.plot(avgReward)
+
+    plt.plot(maxReward, color='red', label="Max")
+    plt.plot(avgReward, color='orange', label="Avg")
 
     for i in range(len(generationList)):
-        plt.scatter([i]*len(generationList[i]), generationList[i])
+        plt.scatter([i]*len(generationList[i]), generationList[i], color='blue', s=1)
 
-    #x_values = generations (this is the index in the )
-    #y_values:
-#    if model != None:
-#        predictions = pd.DataFrame(model.predict(x_test))
-#        predictions = predictions.set_index(x_test.index.to_frame()['DateTime'])
-#        plt.plot(predictions, label='Predictions')
-#        plt.plot(predictions.rolling(60).mean().fillna(0), label='SMA60_Predictions')
-#    for column in x_test.columns.values:
-#        plt.plot(x_test[column], label=column)
-
-#    plt.plot(y_test, label='Truth')
-    #plt.plot(y_test.rolling(60).mean().fillna(0), label = "SMA60_truth")
-    #plt.plot(y_test.rolling(10).mean().fillna(0), label = "SMA10_truth")
-
-#    plt.legend()
+    plt.xlabel("Generation")
+    plt.ylabel("Reward")
+    plt.legend()
     plt.show()
