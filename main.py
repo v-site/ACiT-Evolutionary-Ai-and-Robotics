@@ -19,12 +19,14 @@ windowLength = config['windowLength'] #must be odd (3 gives a genome length of 8
 votingMethod = config['votingMethod']
 iterations = config['iterations']
 maxSteps = config['maxSteps'] #this allows the genom to respawn, if the simulation is terminated
-batchSize = config['batchSize'] #should be divisible by crossover ratio
+popSize = config['populationSize'] #should be divisible by crossover ratio
 
-epochs = 100 # defines the ammounts of epochs for the evolutionary algorithm
+generations = config['generations'] # defines the ammounts of generations foconfig[]he evolutionary algorithm
 
-parentGenomes = util.generate_initial_batch(batchSize, windowLength) #0.13 ms
+parentGenomes = util.generate_initial_batch(popSize, windowLength) #0.13 ms
 conditionList = util.set_condition_list(windowLength) #0.022 ms
+
+generationList = [[],[]]
 
 epochPerformance = []
 startTime = timer()
@@ -34,8 +36,7 @@ config = util.get_config()
 
 #observer
 eCounter = 0
-for _ in range(epochs):
-
+for _ in range(generations):
     eCounter += 1
     n = 0
 
@@ -45,33 +46,36 @@ for _ in range(epochs):
 
     t = timer()
 
-
-    for _ in range(batchSize):
+    
+    for _ in range(popSize):
 
         genomeEpisodes = 1 #number of episodes within the maxSteps
-        genomeReward = 0 #accumulative reward over maxSteps
+        #avgGenomeReward = 0 #accumulative reward over maxSteps
 
         rules = dict(zip(conditionList, util.initialize_rules(windowLength,parentGenomes[n]))) #0.01-0.02 ms
-
-        for _ in range(maxSteps):
-
-            action = util.get_action(worldWidth, observation[2], windowLength, votingMethod, rules, iterations) # 0.16-0.22 ms (this is by far the longest runner, and it gets performed 200 times at a time)
-            observation, reward, terminated, truncated, info = env.step(action) # 0.015-0.02ms (can't realy do anything about this one)
-            genomeReward += 1
-
-            if terminated or truncated:
-                observation, info = env.reset()
-                genomeEpisodes += 1
-
+        totReward = 0 
+        for _ in range(config['maxAttempts']):
+            #print('New attempts')
+            for _ in range(config['maxSteps']):
+                
+                action = util.get_action(worldWidth, observation, config['windowSpacing'], windowLength, votingMethod, rules, iterations) # 0.16-0.22 ms (this is by far the longest runner, and it gets performed 200 times at a time)
+                observation, reward, terminated, truncated, info = env.step(action) # 0.015-0.02ms (can't realy do anything about this one)
+                totReward += reward - abs(observation[0])
+                #print(f"cart velocity: {observation[1]}, pole vel: {observation[3]}")
+                if terminated or truncated:
+                    observation, info = env.reset()
+                    #print("you loose!")
+                    break
         n += 1
-
-        parentResults.append(round(genomeReward/genomeEpisodes, 1))
+        avgGenomeReward = round((totReward/config['maxAttempts']),1)
+        #print(f"avg genome reward: {avgGenomeReward}")
+        parentResults.append(avgGenomeReward)
 
 ################################ VVV only run once per epoch, don't care (0.2ms) VVV #########################################################
 
-    avgSimTime.append(round((timer()-t)*1000/batchSize, 1))
+    avgSimTime.append(round((timer()-t)*1000/popSize, 1))
         
-    for n in range(batchSize):
+    for n in range(popSize):
         parents.append([parentGenomes[n], parentResults[n]])
         
     parents = sorted(parents, key=itemgetter(1))
@@ -80,15 +84,17 @@ for _ in range(epochs):
 
     parentGenomes = util.evolve(parents=parents, cutSize=config['cutSize'], breedType= config['breedType'])
 
-    parentGenomes += (util.generate_initial_batch(batchSize-len(parentGenomes), windowLength)) #add random genoms to satisfy batch size
+    parentGenomes += (util.generate_initial_batch(popSize-len(parentGenomes), windowLength)) #add random genoms to satisfy batch size
     
     epochPerformance.append(round(np.average(parentResults), 2))
 
     maxReward = list(map(itemgetter(1), parents))[-1]
+    
+    generationList.append
 
     #print(f"Generation: {eCounter} maxR: {list(map(itemgetter(1), parents))[-1]} avgR {round(np.average(parentResults), 2)} dT: {round(time.time()-startTime, 2)}")
 
-    if maxReward > 99:
+    if maxReward > 400:
         print(f"Generation: {eCounter} maxR: {list(map(itemgetter(1), parents))[-1]} avgR {round(np.average(parentResults), 2)} dT: {round(time.time()-startTime, 2)}")
         print(parents[-1])
         

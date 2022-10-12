@@ -5,9 +5,9 @@ env = gym.make("CartPole-v1", render_mode = 'human')
 observation, info = env.reset()
 
 
-genome = '11110000000000001001010100001000' #'11110000010000000101000100100100'
+genome = '11110111011001011010101011000001' #'11110000010000000101000100100100'
 
-worldWidth = 16
+worldWidth = conf
 windowLength = len(list(format(len(list(genome)),'b')))-1
 votingMethod = 'equal_split'
 maxSteps = 500
