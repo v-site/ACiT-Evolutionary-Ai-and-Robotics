@@ -6,19 +6,20 @@ from timeit import default_timer as timer # Supposedly more better :))
 from operator import itemgetter
 import time
 
+config = util.get_config()
 #initate
 env = gym.make("CartPole-v1")  #render_mode = 'human' (graphical)
 observation, info = env.reset() #(seed=42) If sample() is to be used to randomize the actionspace, env.reset needs to be seeded for repeatability
-learningTreshold = 0.05
+learningTreshold = False #0.05
 patience = 10
 
 #initiate CA world
-worldWidth = 16 #should be even number
-windowLength = 5 #must be odd (3 gives a genome length of 8 bit (2^3), 5; 32, 7; 128, 9; 256, 12; 1024)
-votingMethod = 'equal_split'
-iterations = 5
-maxSteps = 200 #this allows the genom to respawn, if the simulation is terminated
-batchSize = 100 #should be divisible by crossover ratio
+worldWidth = config['worldWith'] #should be even number
+windowLength = config['windowLength'] #must be odd (3 gives a genome length of 8 bit (2^3), 5; 32, 7; 128, 9; 256, 12; 1024)
+votingMethod = config['votingMethod']
+iterations = config['iterations']
+maxSteps = config['maxSteps'] #this allows the genom to respawn, if the simulation is terminated
+batchSize = config['batchSize'] #should be divisible by crossover ratio
 
 epochs = 100 # defines the ammounts of epochs for the evolutionary algorithm
 
@@ -29,6 +30,7 @@ epochPerformance = []
 startTime = timer()
 avgSimTime = []
 
+config = util.get_config()
 
 #observer
 eCounter = 0
@@ -76,7 +78,7 @@ for _ in range(epochs):
 
     env.close()
 
-    parentGenomes = util.evolve(parents, 0.2, 'uniform')
+    parentGenomes = util.evolve(parents=parents, cutSize=config['cutSize'], breedType= config['breedType'])
 
     parentGenomes += (util.generate_initial_batch(batchSize-len(parentGenomes), windowLength)) #add random genoms to satisfy batch size
     
@@ -84,7 +86,7 @@ for _ in range(epochs):
 
     maxReward = list(map(itemgetter(1), parents))[-1]
 
-    print(f"Generation: {eCounter} maxR: {list(map(itemgetter(1), parents))[-1]} avgR {round(np.average(parentResults), 2)} dT: {round(time.time()-startTime, 2)}")
+    #print(f"Generation: {eCounter} maxR: {list(map(itemgetter(1), parents))[-1]} avgR {round(np.average(parentResults), 2)} dT: {round(time.time()-startTime, 2)}")
 
     if maxReward > 99:
         print(f"Generation: {eCounter} maxR: {list(map(itemgetter(1), parents))[-1]} avgR {round(np.average(parentResults), 2)} dT: {round(time.time()-startTime, 2)}")
@@ -107,5 +109,5 @@ for _ in range(epochs):
     #if maxReward > 99:
         #print(parents[-1])
 
-print(parents)
+#print(parents)
 print('average time per genome ', np.average(avgSimTime), 'ms')
