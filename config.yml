@@ -3,14 +3,14 @@
 seed: null
 
 #CA_world_parameters:
-worldWith: 10 #
-windowLength: 5 #neigbourhood, must be odd (3 gives a genome length of 8 bit (2^3), 5; 32, 7; 128, 9; 256, 12; 1024)
+worldWith: 16 #
+windowLength: 7 #neigbourhood, must be odd (3 gives a genome length of 8 bit (2^3), 5; 32, 7; 128, 9; 256, 12; 1024)
 windowSpacing: 5 #number of empty (zero) celles between each observation string in the world map
 
 #simulation parameters
-generations: 100 #Defines the ammounts of epochs for the evolutionary algorithm
+generations: 200 #Defines the ammounts of epochs for the evolutionary algorithm
 maxSteps: 500 #The max steps the CA can controll the cartPole
-populationSize: 100 #should be divisible by crossover ratio
+populationSize: 200 #should be divisible by crossover ratio
 maxAttempts: 3 #maximum attempts to controll the cart pole
 
 

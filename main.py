@@ -115,10 +115,9 @@ for _ in range(generations):
 
     print(f"Gen: {str(eCounter).zfill(3)} maxR: {maxReward[eCounter-1]} avgR {avgReward[eCounter-1]} dT: {round(timer()-startTime, 1)} aT: {avgSimTime[eCounter-1]}ms")
 
-    #if maxReward > 99:
-        #print(parents[-1])
 
-#print(parents)
+    util.plot(maxReward,avgReward,generationList)
+
 print('average time per genome ', round(np.average(avgSimTime), 2), 'ms')
 
-util.plot(maxReward,avgReward,generationList)
+
