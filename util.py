@@ -4,7 +4,7 @@ from operator import itemgetter
 from timeit import default_timer as timer # Supposedly more better :))
 import yaml
 from yaml.loader import SafeLoader
-
+import matplotlib as plt
 
 #initiate: 
 def get_config():
@@ -13,6 +13,7 @@ def get_config():
         return data
 
 config = get_config()
+
 
 
 def generate_initial_batch(batchSize, windowLength):
@@ -39,9 +40,9 @@ def set_condition_list(windowLength):
 
 
 
-def get_action(worldWidth, angel, windowLength, votingMethod, rules, iterations):
+def get_action(worldWidth, observation, windowSpacing, windowLength, votingMethod, rules, iterations):
 
-    worldMap = initialize_window(worldWidth, angel) #meh
+    worldMap = initialize_window(worldWidth, observation, windowSpacing) #meh
 
     processedMap = apply_rules(worldMap,rules,windowLength,iterations) #slow
 
@@ -51,25 +52,37 @@ def get_action(worldWidth, angel, windowLength, votingMethod, rules, iterations)
 
 
 
-def initialize_window(worldWidth, angel):
+def initialize_window(worldWidth, observation, windowSpacing):
 
-    minAngle = -0.2095
-    maxAngle =  0.2095
+    #https://www.gymlibrary.dev/environments/classic_control/cart_pole/
+    
+    # [CoartPos, CartVel, PoleAngle, PoleAngleVel]
+
+    minVals = [ -2.4, -4, -0.2095, -4]
+    maxVals = [  2.4,  4,  0.2095,  4]
+
     worldMap = []
 
-    # Maps the angle to a value between zero and the maximum binary worldwidth and converts to binary string
-    binaryString = format(int(np.interp(angel, [minAngle, maxAngle], [0,2**worldWidth])), ('0' + str(worldWidth) + 'b'))
+    for i in range(len(observation)):
 
-    for n in range(worldWidth):
+        flipper = int(np.interp(observation[i], [minVals[i], maxVals[i]], [0,worldWidth]))
+        #print(flipper)
 
-        # Appends the each character in the binary string as an int to the worldMap array
-        worldMap.append(int(binaryString[n]))
+        for n in range(worldWidth):
+            if n == flipper:
+                worldMap.append(1)
+            else:
+                worldMap.append(0) 
+        
+        for n in range(windowSpacing):
+            worldMap.append(0)
 
+    #print(worldMap)
     return worldMap
 
 
 
-def initialize_rules(windowLength,genome):
+def initialize_rules(windowLength, genome):
 
     responseList = []
     binaryString = genome
@@ -206,3 +219,25 @@ def evolve(parents, cutSize, breedType):
     offspring += parents # Live to fight another day
 
     return offspring
+
+def plot(generationList):
+    #inputs= generations[[genMax, genAverage], [genomeResults]]
+    for _ in range(generationList):
+        plt.plot()
+    
+    #x_values = generations (this is the index in the )
+    #y_values: 
+    if model != None:
+        predictions = pd.DataFrame(model.predict(x_test))
+        predictions = predictions.set_index(x_test.index.to_frame()['DateTime'])
+        plt.plot(predictions, label='Predictions')
+        plt.plot(predictions.rolling(60).mean().fillna(0), label='SMA60_Predictions')
+    for column in x_test.columns.values:
+        plt.plot(x_test[column], label=column)
+    
+    plt.plot(y_test, label='Truth')
+    #plt.plot(y_test.rolling(60).mean().fillna(0), label = "SMA60_truth")
+    #plt.plot(y_test.rolling(10).mean().fillna(0), label = "SMA10_truth")
+    
+    plt.legend()
+    plt.show()
