@@ -62,7 +62,7 @@ for _ in range(generations):
 
                 action = util.get_action(worldWidth, observation, config['windowSpacing'], windowLength, votingMethod, rules, iterations) # 0.16-0.22 ms (this is by far the longest runner, and it gets performed 200 times at a time)
                 observation, reward, terminated, truncated, info = env.step(action) # 0.015-0.02ms (can't realy do anything about this one)
-                totReward += reward - abs(observation[0])/2.4
+                totReward += reward - abs(observation[0])/2.4 # må nokk endres litt
                 #print(f"cart velocity: {observation[1]}, pole vel: {observation[3]}")
                 if terminated or truncated:
                     observation, info = env.reset()
