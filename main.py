@@ -101,7 +101,7 @@ for _ in range(generations):
     #print(f"Generation: {eCounter} maxR: {list(map(itemgetter(1), parents))[-1]} avgR {round(np.average(parentResults), 2)} dT: {round(time.time()-startTime, 2)}")
 
     if maxReward[eCounter-1] > 400:
-        print(f"Generation: {eCounter} maxR: {maxReward[eCounter-1]} avgR {avgReward[eCounter-1]} dT: {round(time.time()-startTime, 2)}")
+        print(f"Generation: {eCounter} maxR: {maxReward[eCounter-1]} avgR {avgReward[eCounter-1]} dT: {round(timer()-startTime, 1)} aT: {avgSimTime[eCounter-1]}ms")
         print(parents[-1])
 
     #early stop based on average performance?
