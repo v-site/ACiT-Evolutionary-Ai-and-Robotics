@@ -1,4 +1,5 @@
 import numpy as np
+import datetime
 import random
 from operator import itemgetter
 from timeit import default_timer as timer # Supposedly more better :))
@@ -15,6 +16,10 @@ def get_config():
         data = yaml.load(f, Loader = SafeLoader)
 
         return data
+
+
+
+config = get_config()
 
 
 
@@ -217,14 +222,38 @@ def evolve(parents, cutSize, breedType, mutationRatio):
 
 def plot(maxReward,avgReward,generationList):
 
-    plt.plot(maxReward, color='red'   , label="Max")
-    plt.plot(avgReward, color='orange', label="Avg")
+    # sort generationList[i]) and take avg of top 40% (2*cutsize (children+parrents))))
+    #plt.plot(maxReward, color='red'   , label="Max")
+
+    fig = plt.figure()
+    ax = fig.add_axes([0.0, 0.0, 1.6, 0.9])
+
+    ax.plot(maxReward, color='red'   , label="Max")
+    ax.plot(avgReward, color='orange', label="Avg")
 
     for i in range(len(generationList)):
 
-        plt.scatter([i]*len(generationList[i]), generationList[i], color='blue', s=1)
+        ax.scatter([i]*len(generationList[i]), generationList[i], color='blue', s=1)
 
-    plt.xlabel("Generation")
-    plt.ylabel("Reward")
-    plt.legend()
+    ax.set_xlabel("Generation")
+    ax.set_ylabel("Reward")
+    ax.legend()
     plt.show()
+
+    if (len(generationList) == config['generations']):
+        fileName = (str(config['seed']) + '_' +
+                    str(config['worldWith']) + '_' +
+                    str(config['windowLength']) + '_' +
+                    str(config['windowSpacing']) + '_' +
+                    str(config['generations']) + '_' +
+                    str(config['maxSteps']) + '_' +
+                    str(config['populationSize']) + '_' +
+                    str(config['maxAttempts']) + '_' +
+                    str(config['iterations']) + '_' +
+                    str(config['breedType']) + '_' +
+                    str(config['votingMethod']) + '_' +
+                    str(config['mutationRatio']) + '_' +
+                    str(config['cutSize']) + '_' +
+                    datetime.datetime.now().strftime("%d.%m.%Y_%H.%M.%S"))
+
+        fig.savefig('plots/' + fileName + '.png', dpi=300, bbox_inches='tight')
