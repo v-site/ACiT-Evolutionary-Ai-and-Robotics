@@ -73,7 +73,7 @@ for _ in range(generations):
         avgGenomeReward = round((totReward/config['maxAttempts']),1)
         parentResults.append(avgGenomeReward)
 
-################################ VVV only run once per epoch, don't 5care (0.2ms) VVV #########################################################
+################################ VVV only run once per epoch, don't care (0.2ms) VVV #########################################################
 
     avgSimTime.append(round((timer()-t)*1000/popSize, 1))
 
