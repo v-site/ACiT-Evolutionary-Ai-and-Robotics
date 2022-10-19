@@ -26,3 +26,4 @@ for _ in range(config['maxAttempts']):
         #print(f"cart velocity: {observation[1]}, pole vel: {observation[3]}")
         if terminated or truncated:
             observation, info = env.reset()
+env.close()
