@@ -172,7 +172,7 @@ def evolve(parents, cutSize, breedType, mutationRatio):
 
     if breedType == 'one-point': #parent genome split in two and added together
 
-        for i in range(int(Pn/2)):
+        for i in range(int(Pn)): # instead of dividing py 2
 
             p1 = list(parents[i])
             p2 = list(parents[-1-i])
@@ -185,7 +185,7 @@ def evolve(parents, cutSize, breedType, mutationRatio):
 
     if breedType == 'two-point': #parent genome split in three and added together
 
-        for i in range(int(Pn/2)):
+        for i in range(int(Pn)):
 
             p1 = list(parents[i])
             p2 = list(parents[-1-i])
@@ -197,7 +197,7 @@ def evolve(parents, cutSize, breedType, mutationRatio):
 
     if breedType == 'uniform': #randomly insert genom-element from each of the parents
 
-        for i in range(int(Pn)):
+        for i in range(int(Pn)): # instead of dividing py 2
 
             p1 = list(parents[random.randint(0, Pn-1)])
             p2 = list(parents[random.randint(0, Pn-1)])
