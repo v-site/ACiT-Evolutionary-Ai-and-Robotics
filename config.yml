@@ -7,11 +7,16 @@ worldWith: 16 #
 windowLength: 7 #neigbourhood, must be odd (3 gives a genome length of 8 bit (2^3), 5; 32, 7; 128, 9; 256, 12; 1024)
 windowSpacing: 5 #number of empty (zero) celles between each observation string in the world map
 
+##NN_hyperparamaters:
+units: 4
+layers: 1
+
 #simulation parameters
 generations: 100 #Defines the ammounts of epochs for the evolutionary algorithm
 maxSteps: 500 #The max steps the CA can controll the cartPole
-populationSize: 100 #should be divisible by crossover ratio
+populationSize: 10 #should be divisible by crossover ratio
 maxAttempts: 3 #maximum attempts to controll the cart pole
+
 
 #CA_action
 iterations: 6 #Iterations over the search window, before action is taken
@@ -29,6 +34,9 @@ cutSize: 0.2 #the elite of the
     #DONE:define chucnks, to deivde the information that is passed to the CA from the cartPole
   #use the whole population to reproduce, use turnament selection. Implement turnament selection, so the whole pop gets the oppurtunity to reproduce
   #reduce the ammount of elites to around 5-10%
-  #random chould be less tehn 10%
+  #random chould be less then 10%
   #DONE: Crete plot x = generations y = []
   #datalogger
+ 
+ #NN-tasks
+ #

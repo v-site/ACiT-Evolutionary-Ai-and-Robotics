@@ -1,5 +1,5 @@
 import gym
-import util
+import CAutil
 
 env = gym.make("CartPole-v1", render_mode = 'human')
 observation, info = env.reset()
@@ -15,11 +15,11 @@ maxSteps = 500
 genomeReward = 0
 genomeEpisodes = 0
 
-rules = dict(zip(util.set_condition_list(windowLength), util.initialize_rules(windowLength=windowLength, genome=genome)))
+rules = dict(zip(CAutil.set_condition_list(windowLength), CAutil.initialize_rules(windowLength=windowLength, genome=genome)))
 print(rules)
 
 for _ in range(maxSteps):
-    action = util.get_action(worldWidth, observation[2], windowLength, votingMethod, rules, iterations=5)
+    action = CAutil.get_action(worldWidth, observation[2], windowLength, votingMethod, rules, iterations=5)
     observation, reward, terminated, truncated, info = env.step(action)
     genomeReward += 1
 
