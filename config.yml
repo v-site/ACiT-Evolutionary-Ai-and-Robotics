@@ -12,15 +12,15 @@ windowSpacing: 5 #number of empty (zero) celles between each observation string 
 
 
 #simulation parameters
-generations: 20 #Defines the ammounts of epochs for the evolutionary algorithm
+generations: 100 #Defines the ammounts of epochs for the evolutionary algorithm
 maxSteps: 500 #The max steps the CA can controll the cartPole
-populationSize: 20 #should be divisible by crossover ratio
+populationSize: 100 #should be divisible by crossover ratio
 maxAttempts: 3 #maximum attempts to controll the cart pole
 
 
 
 #ploting parameters
-livePlot: 'false' #plot every generation or just at the end
+plotFrequency: 10 #plot every x generations
 polyFactor: 5
 
 

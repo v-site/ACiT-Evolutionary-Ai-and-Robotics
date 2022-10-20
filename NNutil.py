@@ -2,10 +2,12 @@ import numpy as np
 import datetime
 import random
 from operator import itemgetter
-from timeit import default_timer as timer # Supposedly more better :))
+from timeit import default_timer as timer
 import yaml
 from yaml.loader import SafeLoader
 import matplotlib.pyplot as plt
+
+
 
 def get_config():
 
@@ -45,13 +47,13 @@ def get_action(observation, genome):
 
 
 def evolve(parents):
-    #TO-DO:
+
     parents = list(map(itemgetter(0), parents))[int(len(parents)*(1-config['cutSize'])):]
 
     Pn = len(parents) #number of parents
     Pl = len(list(parents[0])) #length of genomes
 
-    offspring = [] #initiate offspring list
+    offspring = []
 
     for i in range(Pn):
 
@@ -72,9 +74,7 @@ def evolve(parents):
             p1 = parents[i]
             p2 = parents[-1-i]
 
-            #All parents get two offsprings
-            c = p1[:int(Pl/2)] + p2[int(Pl/2):] #creates the first offspring
-
+            c = p1[:int(Pl/2)] + p2[int(Pl/2):]
 
             offspring.append(c)
 
@@ -85,14 +85,13 @@ def evolve(parents):
             p1 = parents[i]
             p2 = parents[-1-i]
 
-            #add variable to control the split
             c = p1[:int(Pl*0.25)] + p2[int(Pl*0.25):int(Pl*0.75)] + p1[int(Pl*0.75):]
 
             offspring.append(c)
 
     if config['breedType'] == 'uniform': #randomly insert genom-element from each of the parents
 
-        for i in range(Pn): # instead of dividing py 2
+        for i in range(Pn):
 
             p1 = parents[random.randint(0, Pn-1)]
             p2 = parents[random.randint(0, Pn-1)]

@@ -2,12 +2,12 @@ import numpy as np
 import datetime
 import random
 from operator import itemgetter
-from timeit import default_timer as timer # Supposedly more better :))
+from timeit import default_timer as timer
 import yaml
 from yaml.loader import SafeLoader
 import matplotlib.pyplot as plt
 
-#initiate:
+
 
 def get_config():
 
@@ -27,7 +27,7 @@ def generate_initial_batch(batchSize):
 
     for _ in range(batchSize):
 
-        genome = random.randint(0, 2 ** (2**config['windowLength'])-1) #must be less or equal to 2**(2**windowLength)-1 (for windowlength of 3, genome = (0,255))
+        genome = random.randint(0, 2 ** (2**config['windowLength'])-1)
 
         parentGenomes.append(format(genome, ('0' + str(2**config['windowLength']) + 'b')))
 
@@ -129,13 +129,13 @@ def voting(processedMap):
 
         case 'equal_split':
 
-            l = int(len(processedMap)/2) #assumes the worldWith is even
-            sumHead = sum(processedMap[0:l]) #TO-DO, check if this gives correct output,
+            l = int(len(processedMap)/2)
+            sumHead = sum(processedMap[0:l])
             sumTail = sum(processedMap[l:])
 
             if sumHead == sumTail:
 
-                return int(random.randint(0,1)) #randomly gives 0 or 1 of there is a tie
+                return int(random.randint(0,1))
 
             if sumHead > sumTail:
 
@@ -157,7 +157,7 @@ def evolve(parents):
     Pn = len(parents) #number of parents
     Pl = len(list(parents[0])) #length of genomes
 
-    offspring = [] #initiate offspring list
+    offspring = []
 
     for i in range(Pn):
 
@@ -173,13 +173,12 @@ def evolve(parents):
 
     if config['breedType'] == 'one-point': #parent genome split in two and added together
 
-        for i in range(int(Pn)): # instead of dividing py 2
+        for i in range(int(Pn)):
 
             p1 = list(parents[i])
             p2 = list(parents[-1-i])
 
-            #All parents get two offsprings
-            c = p1[:int(Pl/2)] + p2[int(Pl/2):] #creates the first offspring
+            c = p1[:int(Pl/2)] + p2[int(Pl/2):]
 
 
             offspring.append(''.join(c))
@@ -191,14 +190,13 @@ def evolve(parents):
             p1 = list(parents[i])
             p2 = list(parents[-1-i])
 
-            #add variable to control the split
             c = p1[:int(Pl*0.25)] + p2[int(Pl*0.25):int(Pl*0.75)] + p1[int(Pl*0.75):]
 
             offspring.append(''.join(c))
 
     if config['breedType'] == 'uniform': #randomly insert genom-element from each of the parents
 
-        for i in range(int(Pn)): # instead of dividing py 2
+        for i in range(int(Pn)):
 
             p1 = list(parents[random.randint(0, Pn-1)])
             p2 = list(parents[random.randint(0, Pn-1)])

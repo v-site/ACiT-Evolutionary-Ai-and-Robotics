@@ -9,9 +9,9 @@ from timeit import default_timer as timer
 
 config = NNutil.get_config()
 
-env = gym.make("CartPole-v1")  #render_mode = 'human' (graphical)
-observation, info = env.reset() #(seed=42) If sample() is to be used to randomize the actionspace, env.reset needs to be seeded for repeatability
-learningTreshold = False #0.05
+env = gym.make("CartPole-v1")
+observation, info = env.reset()
+learningTreshold = False5
 patience = 10
 
 
@@ -37,7 +37,7 @@ for gCounter in range(config['generations']):
 
     for n in range(config['populationSize']):
 
-        genome = parentGenomes[n] #shape(4,)..?
+        genome = parentGenomes[n]
 
         totReward = 0
 
@@ -45,9 +45,9 @@ for gCounter in range(config['generations']):
 
             for _ in range(config['maxSteps']):
 
-                observation, reward, terminated, truncated, info = env.step(NNutil.get_action(observation, genome)) # 0.015-0.02ms (can't realy do anything about this one)
+                observation, reward, terminated, truncated, info = env.step(NNutil.get_action(observation, genome))
 
-                totReward += reward - abs(observation[0])/2.4 # må nok endres litt
+                totReward += reward - abs(observation[0])/2.4
 
                 if terminated or truncated:
 
@@ -95,7 +95,7 @@ for gCounter in range(config['generations']):
 
             break
 
-    if (gCounter == config['generations']-1 or config['livePlot'] == 'true'):
+    if (gCounter == config['generations']-1 or (gCounter+1) % config['plotFrequency'] == 0):
 
         NNutil.plot(maxReward, avgReward, generationList)
 

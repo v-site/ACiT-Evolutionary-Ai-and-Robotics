@@ -8,14 +8,14 @@ from timeit import default_timer as timer
 
 config = CAutil.get_config()
 
-env = gym.make("CartPole-v1")  #render_mode = 'human' (graphical)
-observation, info = env.reset() #(seed=42) If sample() is to be used to randomize the actionspace, env.reset needs to be seeded for repeatability
-learningTreshold = False #0.05
+env = gym.make("CartPole-v1")
+observation, info = env.reset()
+learningTreshold = False
 patience = 10
 
 
 
-parentGenomes = CAutil.generate_initial_batch(config['populationSize']) #0.13 ms
+parentGenomes = CAutil.generate_initial_batch(config['populationSize'])
 conditionList = CAutil.set_condition_list()
 
 generationList = []
@@ -37,7 +37,7 @@ for gCounter in range(config['generations']):
 
     for n in range(config['populationSize']):
 
-        rules = dict(zip(conditionList, CAutil.initialize_rules(parentGenomes[n]))) #0.01-0.02 ms
+        rules = dict(zip(conditionList, CAutil.initialize_rules(parentGenomes[n])))
 
         totReward = 0
 
@@ -69,7 +69,7 @@ for gCounter in range(config['generations']):
 
     parentGenomes = CAutil.evolve(parents)
 
-    parentGenomes += CAutil.generate_initial_batch(config['populationSize']-len(parentGenomes)) #add random genoms to satisfy batch size
+    parentGenomes += CAutil.generate_initial_batch(config['populationSize']-len(parentGenomes))
 
     maxReward.append(list(map(itemgetter(1), parents))[-1])
 
@@ -95,7 +95,7 @@ for gCounter in range(config['generations']):
 
             break
 
-    if (gCounter == config['generations']-1 or config['livePlot'] == 'true'):
+    if (gCounter == config['generations']-1 or (gCounter+1) % config['plotFrequency'] == 0):
 
         CAutil.plot(maxReward, avgReward, generationList)
 
