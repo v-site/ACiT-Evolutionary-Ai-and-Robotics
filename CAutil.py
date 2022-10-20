@@ -218,22 +218,37 @@ def evolve(parents):
 
 def plot(maxReward, avgReward, generationList):
 
-    top20 = []
+    top25 = []
+    polyX = []
 
     for i in range(len(generationList)):
 
+        polyX.append(i)
+
         generationList[i].sort()
 
-        top20.append(np.average(generationList[i][int(len(generationList[i])*0.8):]))
+        top25.append(np.average(generationList[i][int(len(generationList[i])*0.8):]))
+
+
+
+    line = np.linspace(0, len(polyX)-1, 100)
+
+    topModel = np.poly1d(np.polyfit(polyX, top25    , config['polyFactor']))
+    maxModel = np.poly1d(np.polyfit(polyX, maxReward, config['polyFactor']))
+    avgModel = np.poly1d(np.polyfit(polyX, avgReward, config['polyFactor']))
 
 
 
     fig = plt.figure()
     ax = fig.add_axes([0, 0, 1.6, 0.9])
 
-    ax.plot(top20    , color='green' , label='^20')
-    ax.plot(maxReward, color='red'   , label="Max", linestyle='dashed')
-    ax.plot(avgReward, color='orange', label="Avg", linestyle='dashed')
+    ax.plot(top25    , color='green' , label='^25')
+    ax.plot(maxReward, color='red'   , label="Max")
+    ax.plot(avgReward, color='orange', label="Avg")
+
+    ax.plot(line, topModel(line), color='green' , linestyle='dashed')
+    ax.plot(line, maxModel(line), color='red'   , linestyle='dashed')
+    ax.plot(line, avgModel(line), color='orange', linestyle='dashed')
 
 
 
@@ -241,10 +256,14 @@ def plot(maxReward, avgReward, generationList):
 
         ax.scatter([i]*len(generationList[i]), generationList[i], color='blue', s=1)
 
+
+
     ax.set_xlabel("Generation")
     ax.set_ylabel("Reward")
     ax.legend()
     plt.show()
+
+
 
     if (len(generationList) == config['generations']):
         fileName = (str(config['seed']) + '_' +

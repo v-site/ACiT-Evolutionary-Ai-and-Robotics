@@ -83,7 +83,7 @@ for gCounter in range(config['generations']):
 
     if maxReward[gCounter] > 450:
 
-        print(parents[-1])
+        print(parents[-1][0])
 
     if (gCounter > patience-1) and learningTreshold:
 
