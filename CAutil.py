@@ -227,7 +227,7 @@ def plot(maxReward, avgReward, generationList):
 
         generationList[i].sort()
 
-        top25.append(np.average(generationList[i][int(len(generationList[i])*0.8):]))
+        top25.append(np.average(generationList[i][int(len(generationList[i])*0.75):]))
 
 
 
