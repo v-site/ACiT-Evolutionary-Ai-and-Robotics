@@ -21,7 +21,7 @@ config = get_config()
 
 
 
-def generate_initial_population(n):
+def generate_initial_batch(n):
 
     return np.random.randn(n,4)
 
@@ -36,7 +36,7 @@ def get_action(observation, genome):
 
     for i in range(len(observation)):
         interpValues.append(np.interp(observation[i], [minVals[i], maxVals[i]], [-1,1]))
-    
+
     if ( np.sum(np.array(interpValues) * genome) < 0 ):
         return 0
     else:
@@ -128,11 +128,11 @@ def plot(maxReward,avgReward,generationList):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Reward")
     ax.legend()
-    #plt.show()
+    plt.show()
 
     if (len(generationList) == config['generations']):
         fileName = (str(config['seed']) + '_' +
-                    str(config['worldWith']) + '_' +
+                    str(config['worldWidth']) + '_' +
                     str(config['windowLength']) + '_' +
                     str(config['windowSpacing']) + '_' +
                     str(config['generations']) + '_' +

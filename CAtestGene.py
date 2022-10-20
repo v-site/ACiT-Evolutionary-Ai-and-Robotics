@@ -14,8 +14,6 @@ observation, info = env.reset() #(seed=42) If sample() is to be used to randomiz
 learningTreshold = False #0.05
 patience = 10
 
-config = CAutil.get_config()
-
 conditionList = CAutil.set_condition_list(config['windowLength']) #0.022 ms
 
 rules = dict(zip(conditionList, CAutil.initialize_rules(config['windowLength'],genome))) #0.01-0.02 ms

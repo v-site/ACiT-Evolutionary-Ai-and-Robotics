@@ -1,11 +1,10 @@
 import gym
 import CAutil
-import threading
 import numpy as np
 from operator import itemgetter
-from timeit import default_timer as timer # Supposedly more better :))
+from timeit import default_timer as timer
 
-#initate
+
 
 config = CAutil.get_config()
 
@@ -14,80 +13,63 @@ observation, info = env.reset() #(seed=42) If sample() is to be used to randomiz
 learningTreshold = False #0.05
 patience = 10
 
-#initiate CA world
-worldWidth   = config['worldWith'] #should be even number
-windowLength = config['windowLength'] #must be odd (3 gives a genome length of 8 bit (2^3), 5; 32, 7; 128, 9; 256, 12; 1024)
-votingMethod = config['votingMethod']
-iterations   = config['iterations']
-maxSteps     = config['maxSteps'] #this allows the genom to respawn, if the simulation is terminated
-popSize      = config['populationSize'] #should be divisible by crossover ratio
-generations  = config['generations'] # defines the ammounts of generations foconfig[]he evolutionary algorithm
 
-parentGenomes = CAutil.generate_initial_batch(popSize, windowLength) #0.13 ms
-conditionList = CAutil.set_condition_list(windowLength) #0.022 ms
+
+parentGenomes = CAutil.generate_initial_batch(config['populationSize']) #0.13 ms
+conditionList = CAutil.set_condition_list()
 
 generationList = []
 
 startTime = timer()
-avgSimTime = []
-
-config = CAutil.get_config()
+simTime = []
 
 maxReward = []
 avgReward = []
 
-#observer
 
-gCounter = 0
 
-for _ in range(generations):
-
-    gCounter += 1
-    n = 0
+for gCounter in range(config['generations']):
 
     parentResults = []
     parents = []
 
     t = timer()
 
-    for _ in range(popSize):
+    for n in range(config['populationSize']):
 
-        genomeEpisodes = 1 #number of episodes within the maxSteps
+        rules = dict(zip(conditionList, CAutil.initialize_rules(parentGenomes[n]))) #0.01-0.02 ms
 
-        rules = dict(zip(conditionList, CAutil.initialize_rules(windowLength,parentGenomes[n]))) #0.01-0.02 ms
         totReward = 0
 
         for _ in range(config['maxAttempts']):
 
             for _ in range(config['maxSteps']):
 
-                action = CAutil.get_action(worldWidth, observation, config['windowSpacing'], windowLength, votingMethod, rules, iterations) # 0.16-0.22 ms (this is by far the longest runner, and it gets performed 200 times at a time)
-                observation, reward, terminated, truncated, info = env.step(action) # 0.015-0.02ms (can't realy do anything about this one)
-                totReward += reward - abs(observation[0])/2.4 # må nokk endres litt
+                observation, reward, terminated, truncated, info = env.step(CAutil.get_action(observation, rules))
+
+                totReward += reward - abs(observation[0])/2.4
 
                 if terminated or truncated:
+
                     observation, info = env.reset()
+
                     break
 
-        n += 1
-        avgGenomeReward = round((totReward/config['maxAttempts']),1)
+        avgGenomeReward = round((totReward/config['maxAttempts']), 1)
+
         parentResults.append(avgGenomeReward)
-
-################################ VVV only run once per epoch, don't care (0.2ms) VVV #########################################################
-
-    avgSimTime.append(round((timer()-t)*1000/popSize, 1))
-
-    for n in range(popSize):
 
         parents.append([parentGenomes[n], parentResults[n]])
 
+
+
+    simTime.append(round((timer()-t)*1000/config['populationSize'], 1))
+
     parents = sorted(parents, key=itemgetter(1))
 
-    env.close()
+    parentGenomes = CAutil.evolve(parents)
 
-    parentGenomes = CAutil.evolve(parents=parents, cutSize=config['cutSize'], breedType=config['breedType'], mutationRatio=config['mutationRatio'])
-
-    parentGenomes += (CAutil.generate_initial_batch(popSize-len(parentGenomes), windowLength)) #add random genoms to satisfy batch size
+    parentGenomes += CAutil.generate_initial_batch(config['populationSize']-len(parentGenomes)) #add random genoms to satisfy batch size
 
     maxReward.append(list(map(itemgetter(1), parents))[-1])
 
@@ -95,24 +77,27 @@ for _ in range(generations):
 
     generationList.append(parentResults)
 
-    if maxReward[gCounter-1] > 400:
 
-        print(f"Generation: {gCounter} maxR: {maxReward[gCounter-1]} avgR {avgReward[gCounter-1]} dT: {round(timer()-startTime, 1)} aT: {avgSimTime[gCounter-1]}ms")
+
+    print(f"Gen: {str(gCounter+1).zfill(3)} maxR: {maxReward[gCounter]} avgR {avgReward[gCounter]} dT: {round(timer()-startTime, 1)} aT: {simTime[gCounter]}ms")
+
+    if maxReward[gCounter] > 450:
+
         print(parents[-1])
 
-    #early stop based on average performance?
-    if (gCounter > patience) and learningTreshold:
+    if (gCounter > patience-1) and learningTreshold:
 
         avgLearningRate = np.average(np.diff(parentResults[-patience:]))
+
         print(f"learning th: {learningTreshold}, based on {parentResults[-patience:]}, avg learning rate: {avgLearningRate}")
 
         if abs(avgLearningRate) < abs(learningTreshold):
 
             break
 
-    print(f"Gen: {str(gCounter).zfill(3)} maxR: {maxReward[gCounter-1]} avgR {avgReward[gCounter-1]} dT: {round(timer()-startTime, 1)} aT: {avgSimTime[gCounter-1]}ms")
+    if (gCounter == config['generations']-1 or config['livePlot'] == 'true'):
 
-    ploting = threading.Thread(target=CAutil.plot(maxReward, avgReward, generationList))
-    ploting.start()
+        CAutil.plot(maxReward, avgReward, generationList)
 
-print('\n', 'Average time per genome ', round(np.average(avgSimTime), 2), 'ms')
+
+print(parents[-1][0])

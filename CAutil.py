@@ -13,9 +13,7 @@ def get_config():
 
     with open('config.yml') as f:
 
-        data = yaml.load(f, Loader = SafeLoader)
-
-        return data
+        return yaml.load(f, Loader = SafeLoader)
 
 
 
@@ -23,45 +21,45 @@ config = get_config()
 
 
 
-def generate_initial_batch(batchSize, windowLength):
+def generate_initial_batch(batchSize):
 
     parentGenomes = []
 
     for _ in range(batchSize):
 
-        genome = random.randint(0, 2 ** (2**windowLength) - 1 ) #must be less or equal to 2**(2**windowLength)-1 (for windowlength of 3, genome = (0,255))
+        genome = random.randint(0, 2 ** (2**config['windowLength'])-1) #must be less or equal to 2**(2**windowLength)-1 (for windowlength of 3, genome = (0,255))
 
-        parentGenomes.append(format(genome, ('0' + str(2**windowLength) + 'b')))
+        parentGenomes.append(format(genome, ('0' + str(2**config['windowLength']) + 'b')))
 
     return parentGenomes
 
 
 
-def set_condition_list(windowLength):
+def set_condition_list():
 
     conditionList = []
 
-    for n in range(2**windowLength):
-        # Appends n in binary format to list of conditions
-        conditionList.append(format(n, ('0' + str(windowLength) + 'b')))
+    for n in range(2**config['windowLength']):
+
+        conditionList.append(format(n, ('0' + str(config['windowLength']) + 'b')))
 
     return conditionList
 
 
 
-def get_action(worldWidth, observation, windowSpacing, windowLength, votingMethod, rules, iterations):
+def get_action(observation, rules):
 
-    worldMap = initialize_window(worldWidth, observation, windowSpacing) #meh
+    worldMap = initialize_window(observation)
 
-    processedMap = apply_rules(worldMap,rules,windowLength,iterations) #slow
+    processedMap = apply_rules(worldMap, rules)
 
-    action = voting(processedMap,votingMethod) #good enough
+    action = voting(processedMap)
 
     return action
 
 
 
-def initialize_window(worldWidth, observation, windowSpacing):
+def initialize_window(observation):
 
     #https://www.gymlibrary.dev/environments/classic_control/cart_pole/
 
@@ -74,13 +72,13 @@ def initialize_window(worldWidth, observation, windowSpacing):
 
     for i in range(len(observation)):
 
-        flipper = int(np.interp(observation[i], [minVals[i], maxVals[i]], [0,worldWidth]))
+        flipper = int(np.interp(observation[i], [minVals[i], maxVals[i]], [0,config['worldWidth']]))
 
-        for n in range(worldWidth):
+        for n in range(config['worldWidth']):
 
             worldMap.append(1) if n == flipper else worldMap.append(0)
 
-        for n in range(windowSpacing):
+        for n in range(config['windowSpacing']):
 
             worldMap.append(0)
 
@@ -88,29 +86,28 @@ def initialize_window(worldWidth, observation, windowSpacing):
 
 
 
-def initialize_rules(windowLength, genome):
+def initialize_rules(genome):
 
     responseList = []
-    binaryString = genome
 
     if isinstance(genome, int):
 
-        binaryString = format(genome, ('0' + str(2**windowLength) + 'b'))
+        genome = format(genome, ('0' + str(2**config['windowLength']) + 'b'))
 
-    for n in range(2**windowLength):
+    for n in range(2**config['windowLength']):
 
-        responseList.append(int(binaryString[n]))
+        responseList.append(int(genome[n]))
 
     return responseList
 
 
 
-def apply_rules(worldMap,rules,windowLength,iterations):
+def apply_rules(worldMap, rules):
 
-    edgeWidth = int((windowLength-1)/2)
+    edgeWidth = int((config['windowLength']-1)/2)
     tempMap = [0]*edgeWidth + worldMap + [0]*edgeWidth
 
-    for _ in range(iterations):
+    for _ in range(config['iterations']):
 
         processedMap = []
         n = edgeWidth
@@ -126,9 +123,9 @@ def apply_rules(worldMap,rules,windowLength,iterations):
 
 
 
-def voting(processedMap,votingMethod):
+def voting(processedMap):
 
-    match votingMethod:
+    match config['votingMethod']:
 
         case 'equal_split':
 
@@ -150,13 +147,12 @@ def voting(processedMap,votingMethod):
 
                 return 0
 
-    return 1 # Unless if, return 1
+    return 1
 
 
+def evolve(parents):
 
-def evolve(parents, cutSize, breedType, mutationRatio):
-    #TO-DO:
-    parents = list(map(itemgetter(0), parents))[int(len(parents)*(1-cutSize)):]
+    parents = list(map(itemgetter(0), parents))[int(len(parents)*(1-config['cutSize'])):]
 
     Pn = len(parents) #number of parents
     Pl = len(list(parents[0])) #length of genomes
@@ -169,13 +165,13 @@ def evolve(parents, cutSize, breedType, mutationRatio):
 
         for n in range(Pl):
 
-            if random.random() <= mutationRatio:
+            if random.random() <= config['mutationRatio']:
 
                 parentGenome[n] = '0' if parentGenome[n] == '1' else '1'
 
         offspring.append(''.join(parentGenome))
 
-    if breedType == 'one-point': #parent genome split in two and added together
+    if config['breedType'] == 'one-point': #parent genome split in two and added together
 
         for i in range(int(Pn)): # instead of dividing py 2
 
@@ -188,7 +184,7 @@ def evolve(parents, cutSize, breedType, mutationRatio):
 
             offspring.append(''.join(c))
 
-    if breedType == 'two-point': #parent genome split in three and added together
+    if config['breedType'] == 'two-point': #parent genome split in three and added together
 
         for i in range(int(Pn)):
 
@@ -200,7 +196,7 @@ def evolve(parents, cutSize, breedType, mutationRatio):
 
             offspring.append(''.join(c))
 
-    if breedType == 'uniform': #randomly insert genom-element from each of the parents
+    if config['breedType'] == 'uniform': #randomly insert genom-element from each of the parents
 
         for i in range(int(Pn)): # instead of dividing py 2
 
@@ -220,16 +216,26 @@ def evolve(parents, cutSize, breedType, mutationRatio):
 
 
 
-def plot(maxReward,avgReward,generationList):
+def plot(maxReward, avgReward, generationList):
 
-    # sort generationList[i]) and take avg of top 40% (2*cutsize (children+parrents))))
-    #plt.plot(maxReward, color='red'   , label="Max")
+    top20 = []
+
+    for i in range(len(generationList)):
+
+        generationList[i].sort()
+
+        top20.append(np.average(generationList[i][int(len(generationList[i])*0.8):]))
+
+
 
     fig = plt.figure()
-    ax = fig.add_axes([0.0, 0.0, 1.6, 0.9])
+    ax = fig.add_axes([0, 0, 1.6, 0.9])
 
-    ax.plot(maxReward, color='red'   , label="Max")
-    ax.plot(avgReward, color='orange', label="Avg")
+    ax.plot(top20    , color='green' , label='^20')
+    ax.plot(maxReward, color='red'   , label="Max", linestyle='dashed')
+    ax.plot(avgReward, color='orange', label="Avg", linestyle='dashed')
+
+
 
     for i in range(len(generationList)):
 
@@ -242,7 +248,7 @@ def plot(maxReward,avgReward,generationList):
 
     if (len(generationList) == config['generations']):
         fileName = (str(config['seed']) + '_' +
-                    str(config['worldWith']) + '_' +
+                    str(config['worldWidth']) + '_' +
                     str(config['windowLength']) + '_' +
                     str(config['windowSpacing']) + '_' +
                     str(config['generations']) + '_' +
