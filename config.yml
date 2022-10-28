@@ -20,7 +20,7 @@ maxAttempts: 3 #maximum attempts to controll the cart pole
 
 
 #ploting parameters
-plotFrequency: 10 #plot every x generations
+plotFrequency: 10 #plot every x generations, set equal to generations to only plot at the end of runtime
 polyFactor: 5
 
 
@@ -33,7 +33,7 @@ iterations: 6 #Iterations over the search window, before action is taken
 #evolving parameters:
 breedType: 'uniform' # ['one-point', 'two-point',  'uniform']
 votingMethod: 'equal_split' # ['majority', 'equal_split']
-mutationRatio: 0.01
+mutationRatio: 0.01 #the posibility of a single bit in the child genome fliping state
 cutSize: 0.2 #the elite of the
 
 
