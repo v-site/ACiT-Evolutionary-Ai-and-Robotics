@@ -47,23 +47,20 @@ def set_condition_list():
 
 
 
-def get_action(observation, rules):
+def initialize_rules(genome):
 
-    worldMap = initialize_window(observation)
+    if isinstance(genome, int):
 
-    processedMap = apply_rules(worldMap, rules)
+        genome = format(genome, ('0' + str(2**config['windowLength']) + 'b'))
 
-    action = voting(processedMap)
-
-    return action
+    return list(map(int, genome))
 
 
-
-def initialize_window(observation):
+def initialize_world(observation):
 
     #https://www.gymlibrary.dev/environments/classic_control/cart_pole/
 
-    #Observation values: [CoartPos, CartVel, PoleAngle, PoleAngleVel]
+    #Observation values: [CartPos, CartVel, PoleAngle, PoleAngleVel]
 
     minVals = [ -2.4, -4, -0.2095, -4]
     maxVals = [  2.4,  4,  0.2095,  4]
@@ -83,22 +80,6 @@ def initialize_window(observation):
             worldMap.append(0)
 
     return worldMap
-
-
-
-def initialize_rules(genome):
-
-    responseList = []
-
-    if isinstance(genome, int):
-
-        genome = format(genome, ('0' + str(2**config['windowLength']) + 'b'))
-
-    for n in range(2**config['windowLength']):
-
-        responseList.append(int(genome[n]))
-
-    return responseList
 
 
 
@@ -125,29 +106,40 @@ def apply_rules(worldMap, rules):
 
 def voting(processedMap):
 
-    match config['votingMethod']:
+    if config['votingMethod'] == 'equal_split':
 
-        case 'equal_split':
+        l = int(len(processedMap)/2)
+        sumHead = sum(processedMap[0:l])
+        sumTail = sum(processedMap[l:])
 
-            l = int(len(processedMap)/2)
-            sumHead = sum(processedMap[0:l])
-            sumTail = sum(processedMap[l:])
+        if sumHead == sumTail:
 
-            if sumHead == sumTail:
+            return int(random.randint(0,1))
 
-                return int(random.randint(0,1))
+        if sumHead > sumTail:
 
-            if sumHead > sumTail:
+            return 0
 
-                return 0
+    elif config['votingMethod'] == 'majority':
 
-        case 'majority':
+        if processedMap.count('1') <= processedMap.count('0'):
 
-            if processedMap.count('1') <= processedMap.count('0'):
-
-                return 0
+            return 0
 
     return 1
+
+
+
+def get_action(observation, rules):
+
+    worldMap = initialize_world(observation)
+
+    processedMap = apply_rules(worldMap, rules)
+
+    action = voting(processedMap)
+
+    return action
+
 
 
 def evolve(parents):

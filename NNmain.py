@@ -11,7 +11,7 @@ config = NNutil.get_config()
 
 env = gym.make("CartPole-v1")
 observation, info = env.reset()
-learningTreshold = False5
+learningTreshold = False
 patience = 10
 
 
