@@ -5,7 +5,7 @@ seed: null
 
 
 #CA_world_parameters:
-worldWidth: 16 #
+worldWidth: 6 #
 windowLength: 7 #neigbourhood, must be odd (3 gives a genome length of 8 bit (2^3), 5; 32, 7; 128, 9; 256, 12; 1024)
 windowSpacing: 5 #number of empty (zero) celles between each observation string in the world map
 
