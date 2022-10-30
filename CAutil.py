@@ -75,6 +75,9 @@ def initialize_world(observation):
 
             worldMap.append(1) if n == flipper else worldMap.append(0)
 
+        if i == len(observation)-1:
+            continue
+
         for n in range(config['windowSpacing']):
 
             worldMap.append(0)
