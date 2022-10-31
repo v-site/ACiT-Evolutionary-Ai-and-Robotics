@@ -10,39 +10,36 @@ except ImportError:
     import Image
 
 
-vidcap = cv2.VideoCapture('VideoResults/CAtestGene.mkv')
+vidcap = cv2.VideoCapture('VideoResults/2021-05-06 15-39-21.mkv')
 frames = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT)) - 1
 f = 0
 
 with tempfile.TemporaryDirectory() as directory:
 
-    print('Created temporary directory: %s' % directory)
+    print('Created temporary directory: \n %s' % directory, '\n')
 
-    ret,frame = vidcap.read()
-    f+=1
+    for _ in tqdm (range(frames), desc='Cleaning'):
 
-    while np.average(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)) < 20:
         ret,frame = vidcap.read()
+
+        if not(ret) or np.average(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)) < 20:
+            continue
+
+        cv2.imwrite(directory + '/frame' + str(f) + '.jpg', frame)
         f+=1
 
-    cv2.imwrite(directory + '/frame.jpg', frame)
-    background = Image.open(directory + '/frame.jpg')
+    print('\n', 'Discarded %d frames' % (frames-f), '\n')
 
-    for _ in tqdm (range(frames-f), desc='Stacking'):
+    background = Image.open(directory + '/frame0.jpg')
 
-        if f < frames:
+    for n in tqdm (range(f), desc='Stacking'):
 
-            ret,frame = vidcap.read()
-            f+=1
+        overlay = Image.open(directory + '/frame' + str(n) + '.jpg')
 
-            if np.average(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)) > 20:
+        new_img = Image.blend(background, overlay, 1/f)
 
-                cv2.imwrite(directory + '/frame.jpg', frame)
-                overlay = Image.open(directory + '/frame.jpg')
+        new_img.save('VideoResults/Stack.png','PNG')
 
-                new_img = Image.blend(background, overlay, 1/frames)
-                new_img.save('VideoResults/Stack.png','PNG')
-
-                background = Image.open('VideoResults/Stack.png')
+        background = Image.open('VideoResults/Stack.png')
 
 background.show()

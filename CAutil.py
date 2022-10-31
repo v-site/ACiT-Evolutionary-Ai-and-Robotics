@@ -113,13 +113,9 @@ def voting(processedMap):
 
         l = int(len(processedMap)/2)
         b = len(processedMap) % 2
-        print(b)
+
         sumHead = sum(processedMap[0:l+b])
         sumTail = sum(processedMap[l:])
-
-        print(processedMap)
-        print(processedMap[0:l+b])
-        print(processedMap[l:])
 
         if sumHead == sumTail:
 
@@ -174,7 +170,7 @@ def evolve(parents):
 
     if config['breedType'] == 'one-point': #parent genome split in two and added together
 
-        for i in range(int(Pn)):
+        for i in range(Pn):
 
             p1 = list(parents[i])
             p2 = list(parents[-1-i])
@@ -186,7 +182,7 @@ def evolve(parents):
 
     if config['breedType'] == 'two-point': #parent genome split in three and added together
 
-        for i in range(int(Pn)):
+        for i in range(Pn):
 
             p1 = list(parents[i])
             p2 = list(parents[-1-i])
@@ -197,7 +193,7 @@ def evolve(parents):
 
     if config['breedType'] == 'uniform': #randomly insert genom-element from each of the parents
 
-        for i in range(int(Pn)):
+        for i in range(Pn):
 
             p1 = list(parents[random.randint(0, Pn-1)])
             p2 = list(parents[random.randint(0, Pn-1)])
