@@ -112,8 +112,14 @@ def voting(processedMap):
     if config['votingMethod'] == 'equal_split':
 
         l = int(len(processedMap)/2)
-        sumHead = sum(processedMap[0:l])
+        b = len(processedMap) % 2
+        print(b)
+        sumHead = sum(processedMap[0:l+b])
         sumTail = sum(processedMap[l:])
+
+        print(processedMap)
+        print(processedMap[0:l+b])
+        print(processedMap[l:])
 
         if sumHead == sumTail:
 
