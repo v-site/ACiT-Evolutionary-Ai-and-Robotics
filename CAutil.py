@@ -218,9 +218,9 @@ def evolve(parents):
     print(f"len midleClass: {len(midleClass)}")
     offspring = []
 
-    offspring+=mutate(elites) #some will mutate
+    offspring+=mutate(elites[:int(len(elites)*0.2)]) #some will mutate
 
-    offspring+=breed(elites) #elits will breed
+    offspring+=breed(elites[int(len(elites)*0.2):]) #elits will breed
     
     #run tournament
     Mn =len(midleClass)
@@ -236,7 +236,7 @@ def evolve(parents):
         l = list(map(itemgetter(0), rivals))
     
         child = list(breed(l))
-        print(f"{child} \n")
+        #print(f"{child} \n")
         offspring.append(child[0])
         
     
