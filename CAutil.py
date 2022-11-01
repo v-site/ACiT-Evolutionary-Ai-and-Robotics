@@ -145,20 +145,14 @@ def get_action(observation, rules):
 
     return action
 
-
-
-def evolve(parents):
-
-    parents = list(map(itemgetter(0), parents))[int(len(parents)*(1-config['cutSize'])):]
-
-    Pn = len(parents) #number of parents
-    Pl = len(list(parents[0])) #length of genomes
-
+def mutate(candidates):
     offspring = []
+    Pn = len(candidates)
+    Pl = len(list(candidates[0]))#genome length
 
-    for i in range(Pn):
+    for i in range(len(candidates)):
 
-        parentGenome = list(parents[i])
+        parentGenome = list(candidates[i])
 
         for n in range(Pl):
 
@@ -168,12 +162,18 @@ def evolve(parents):
 
         offspring.append(''.join(parentGenome))
 
+    return offspring
+
+def breed(candidates):
+    Pn = len(candidates) #number of elites
+    Pl = len(list(candidates[0])) #length of genomes
+    offspring = []
     if config['breedType'] == 'one-point': #parent genome split in two and added together
 
         for i in range(Pn):
 
-            p1 = list(parents[i])
-            p2 = list(parents[-1-i])
+            p1 = list(candidates[i])
+            p2 = list(candidates[-1-i])
 
             c = p1[:int(Pl/2)] + p2[int(Pl/2):]
 
@@ -184,19 +184,19 @@ def evolve(parents):
 
         for i in range(Pn):
 
-            p1 = list(parents[i])
-            p2 = list(parents[-1-i])
+            p1 = list(candidates[i])
+            p2 = list(candidates[-1-i])
 
             c = p1[:int(Pl*0.25)] + p2[int(Pl*0.25):int(Pl*0.75)] + p1[int(Pl*0.75):]
 
             offspring.append(''.join(c))
 
-    if config['breedType'] == 'uniform': #randomly insert genom-element from each of the parents
+    if config['breedType'] == 'uniform': #randomly insert genom-element from each of the candidates
 
         for i in range(Pn):
 
-            p1 = list(parents[random.randint(0, Pn-1)])
-            p2 = list(parents[random.randint(0, Pn-1)])
+            p1 = list(candidates[random.randint(0, Pn-1)])
+            p2 = list(candidates[random.randint(0, Pn-1)])
             c = []
 
             for n in range(Pl):
@@ -204,9 +204,45 @@ def evolve(parents):
                 c.append(p1[n]) if  random.random() < 0.5 else c.append(p2[n])
 
             offspring.append(''.join(c))
+    
+    return offspring
 
-    offspring += parents # Live to fight another day
 
+def evolve(parents):
+
+    Pn = len(parents) #number of elites
+
+    elites = list(map(itemgetter(0), parents))[int(Pn*(1-config['elitRatio'])):]
+    midleClass = parents[:int(Pn*(1-config['elitRatio']))]
+    print(f"len elites: {len(elites)}")
+    print(f"len midleClass: {len(midleClass)}")
+    offspring = []
+
+    offspring+=mutate(elites) #some will mutate
+
+    offspring+=breed(elites) #elits will breed
+    
+    #run tournament
+    Mn =len(midleClass)
+    for _ in range(int(Pn*config['midleClassRatio'])):
+        rivals  = []
+        for _ in range(random.randint(2, Mn-1)):
+            rivals.append(midleClass[random.randint(0, Mn-1)])
+        
+        #select the two best of the rivals
+        rivals = sorted(rivals, key=itemgetter(1))[-2:]
+        
+        #breed the two, 
+        l = list(map(itemgetter(0), rivals))
+    
+        child = list(breed(l))
+        print(f"{child} \n")
+        offspring.append(child[0])
+        
+    
+
+   
+    print(f"len ofspring: {len(offspring)}")
     return offspring
 
 

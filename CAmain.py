@@ -44,7 +44,7 @@ for gCounter in range(config['generations']):
         for _ in range(config['maxAttempts']):
 
             for _ in range(config['maxSteps']):
-
+                
                 observation, reward, terminated, truncated, info = env.step(CAutil.get_action(observation, rules))
 
                 totReward += reward - abs(observation[0])/2.4
