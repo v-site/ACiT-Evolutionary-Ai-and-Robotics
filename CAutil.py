@@ -262,10 +262,10 @@ def evolve(parents):
         offspring.append(child[0])
 
 
+    #print(f"Elite passed to next gen:   {len(elites)}")
+    #print(f"Elite offsprings:           {len(elitesOffspring)}")
+    #print(f"Midle class offspring:      {len(offspring)}")
 
-    print(f"Elite offsprings:           {len(elitesOffspring)}")
-    print(f"Midle class offspring:      {len(offspring)}")
-    print(f"Elite passed to next gen:   {len(elites)}")
     #returns 90% of the population, add 10% random later
     #print(f"Passed to CA: {len(offspring + elitesOffspring + elites)}")
     return offspring + elitesOffspring + elites
