@@ -223,7 +223,7 @@ def evolve(parents):
 
     Pn = len(parents) #number of elites
 
-    elites = list(map(itemgetter(0), parents))[int(Pn*(1-config['elitRatio'])):]
+    elites = list(map(itemgetter(0), parents))[int(Pn*(1-config['elitRatio']/2)):]
 
     #print(len(elites))
 
@@ -246,7 +246,7 @@ def evolve(parents):
 
     #run tournament for the rest
     Mn = len(midleClass)
-    for _ in range(int((Pn*config['midleClassRatio'])-len(elitesOffspring))):
+    for _ in range(int((Pn*config['midleClassRatio']))):
         rivals  = []
         for _ in range(random.randint(2, Mn-1)):
             rivals.append(midleClass[random.randint(0, Mn-1)])
@@ -263,9 +263,9 @@ def evolve(parents):
 
 
 
-    #print(f"Elite offsprings:           {len(elitesOffspring)}")
-    #print(f"Midle class offspring:      {len(offspring)}")
-    #print(f"Elite passed to next gen:   {len(elitesOffspring)}")
+    print(f"Elite offsprings:           {len(elitesOffspring)}")
+    print(f"Midle class offspring:      {len(offspring)}")
+    print(f"Elite passed to next gen:   {len(elites)}")
     #returns 90% of the population, add 10% random later
     #print(f"Passed to CA: {len(offspring + elitesOffspring + elites)}")
     return offspring + elitesOffspring + elites
@@ -351,4 +351,3 @@ def write_logs(fileName, logEntry):
 
     # close the file
     f.close()
-    
