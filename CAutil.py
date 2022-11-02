@@ -2,7 +2,6 @@ import numpy as np
 import datetime
 import random
 from operator import itemgetter
-from timeit import default_timer as timer
 import yaml
 from yaml.loader import SafeLoader
 import matplotlib.pyplot as plt
@@ -22,7 +21,7 @@ config = get_config()
 
 
 def generate_initial_batch(batchSize):
-    
+
     parentGenomes = []
 
     for _ in range(batchSize):
@@ -145,9 +144,11 @@ def get_action(observation, rules):
 
     return action
 
+
+
 def mutate(candidates):
+
     offspring = []
-    Pn = len(candidates)
     Pl = len(list(candidates[0]))#genome length
 
     for i in range(len(candidates)):
@@ -164,10 +165,14 @@ def mutate(candidates):
 
     return offspring
 
+
+
 def breed(candidates):
+
     Pn = len(candidates) #number of elites
     Pl = len(list(candidates[0])) #length of genomes
     offspring = []
+
     if config['breedType'] == 'one-point': #parent genome split in two and added together
 
         for i in range(Pn):
@@ -204,44 +209,56 @@ def breed(candidates):
                 c.append(p1[n]) if  random.random() < 0.5 else c.append(p2[n])
 
             offspring.append(''.join(c))
-    
+
     return offspring
 
 
+
 def evolve(parents):
+
     #print(len(parents))
+
     Pn = len(parents) #number of elites
-    elites = list(map(itemgetter(0), parents))[int(Pn*(1-config['elitRatio'])):] 
+
+    elites = list(map(itemgetter(0), parents))[int(Pn*(1-config['elitRatio'])):]
+
     #print(len(elites))
-    midleClass = parents[:int(Pn*(1-config['midleClassRatio']))]                        
+
+    midleClass = parents[:int(Pn*(1-config['elitRatio']))]
+
     #print(len(midleClass))
+
     offspring = []
     elitesOffspring = []
-    elitesOffspring+=breed(elites[int(len(elites)*0.2):]) #elits will breed
-    #print(len(offspring))                           #gives 16 elites
-    elitesOffspring+=mutate(elites[:int(len(elites)*0.2)]) #some elites will spontaneous mutate       #gives 4
-    #print(len(offspring))
-    
-    
-    
+
+    elitesOffspring += breed(elites[int(len(elites)*0.2):]) #elits will breed
+
+    #print(len(elitesOffspring))                           #gives 16 elites
+
+    elitesOffspring += mutate(elites[:int(len(elites)*0.2)]) #some elites will spontaneous mutate       #gives 4
+
+    #print(len(elitesOffspring))
+
+
+
     #run tournament for the rest
-    Mn =len(midleClass)
+    Mn = len(midleClass)
     for _ in range(int((Pn*config['midleClassRatio'])-len(elitesOffspring))):
         rivals  = []
         for _ in range(random.randint(2, Mn-1)):
             rivals.append(midleClass[random.randint(0, Mn-1)])
-        
+
         #select the two best of the rivals
         rivals = sorted(rivals, key=itemgetter(1))[-2:]
-        
-        #breed the two, 
+
+        #breed the two,
         l = list(map(itemgetter(0), rivals))
-    
+
         child = list(breed(l))
         #print(f"{child} \n")
         offspring.append(child[0])
-        
-    
+
+
 
     #print(f"Elite offsprings:           {len(elitesOffspring)}")
     #print(f"Midle class offspring:      {len(offspring)}")
@@ -256,7 +273,7 @@ def plot(maxReward, avgReward, allReward, gCounter):
 
     top25 = []
     polyX = []
-    
+
     for i in range(gCounter):
 
         polyX.append(i)
@@ -268,7 +285,7 @@ def plot(maxReward, avgReward, allReward, gCounter):
 
 
     line = np.linspace(0, len(polyX)-1, 100)
- 
+
     topModel = np.poly1d(np.polyfit(polyX, top25    , config['polyFactor']))
     maxModel = np.poly1d(np.polyfit(polyX, maxReward, config['polyFactor']))
     avgModel = np.poly1d(np.polyfit(polyX, avgReward, config['polyFactor']))

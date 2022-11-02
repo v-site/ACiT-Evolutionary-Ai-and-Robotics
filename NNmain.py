@@ -58,7 +58,7 @@ for gCounter in range(config['generations']):
 
     parentGenomes = NNutil.evolve(parents)
 
-    parentGenomes += NNutil.generate_initial_batch(config['populationSize']-len(parentGenomes))
+    parentGenomes.extend(NNutil.generate_initial_batch(config['populationSize']-len(parentGenomes)))
 
     maxReward.append(list(map(itemgetter(1), parents))[-1])
 

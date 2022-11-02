@@ -46,33 +46,38 @@ def get_action(observation, genome):
 
 
 
-def evolve(parents):
-
-    parents = list(map(itemgetter(0), parents))[int(len(parents)*(1-config['cutSize'])):]
-
-    Pn = len(parents) #number of parents
-    Pl = len(list(parents[0])) #length of genomes
+def mutate(candidates):
 
     offspring = []
 
-    for i in range(Pn):
+    for i in range(len(candidates)):
 
-        c = parents[i]
+        c = candidates[i]
 
-        for n in range(Pl):
+        for n in range(len(candidates[0])):
 
             if random.random() <= config['mutationRatio']:
 
                 c[n] *= (1 + (random.random() / 10))
 
-        offspring.append(c)
+        offspring.append(list(c))
+
+    return offspring
+
+
+
+def breed(candidates):
+
+    Pn = len(candidates) #number of elites
+    Pl = len(list(candidates[0])) #length of genomes
+    offspring = []
 
     if config['breedType'] == 'one-point': #parent genome split in two and added together
 
         for i in range(Pn):
 
-            p1 = parents[i]
-            p2 = parents[-1-i]
+            p1 = candidates[i]
+            p2 = candidates[-1-i]
 
             c = p1[:int(Pl/2)] + p2[int(Pl/2):]
 
@@ -82,8 +87,8 @@ def evolve(parents):
 
         for i in range(Pn):
 
-            p1 = parents[i]
-            p2 = parents[-1-i]
+            p1 = candidates[i]
+            p2 = candidates[-1-i]
 
             c = p1[:int(Pl*0.25)] + p2[int(Pl*0.25):int(Pl*0.75)] + p1[int(Pl*0.75):]
 
@@ -93,8 +98,8 @@ def evolve(parents):
 
         for i in range(Pn):
 
-            p1 = parents[random.randint(0, Pn-1)]
-            p2 = parents[random.randint(0, Pn-1)]
+            p1 = candidates[random.randint(0, Pn-1)]
+            p2 = candidates[random.randint(0, Pn-1)]
             c = []
 
             for n in range(Pl):
@@ -103,9 +108,64 @@ def evolve(parents):
 
             offspring.append(c)
 
-    offspring += parents # Live to fight another day
 
     return offspring
+
+
+
+def evolve(parents):
+
+    #print(len(parents))
+
+    Pn = len(parents) #number of elites
+
+    elites = list(map(itemgetter(0), parents))[int(Pn*(1-config['elitRatio'])):]
+
+    #print(len(elites))
+
+    midleClass = parents[:int(Pn*(1-config['elitRatio']))]
+
+    #print(len(midleClass))
+
+    offspring = []
+    elitesOffspring = []
+
+    elitesOffspring += breed(elites[int(len(elites)*0.2):]) #elits will breed
+
+    #print(len(elitesOffspring))                           #gives 16 elites
+
+    elitesOffspring += mutate(elites[:int(len(elites)*0.2)]) #some elites will spontaneous mutate       #gives 4
+
+    #print(len(elitesOffspring))
+
+
+
+    #run tournament for the rest
+    Mn = len(midleClass)
+    for _ in range(int((Pn*config['midleClassRatio'])-len(elitesOffspring))):
+        rivals  = []
+        for _ in range(random.randint(2, Mn-1)):
+            rivals.append(midleClass[random.randint(0, Mn-1)])
+
+        #select the two best of the rivals
+        rivals = sorted(rivals, key=itemgetter(1))[-2:]
+
+        #breed the two,
+        l = list(map(itemgetter(0), rivals))
+
+        child = list(breed(l))
+        #print(f"{child} \n")
+        offspring.append(child[0])
+
+
+
+    #print(f"Elite offsprings:           {len(elitesOffspring)}")
+    #print(f"Midle class offspring:      {len(offspring)}")
+    #print(f"Elite passed to next gen:   {len(elitesOffspring)}")
+    #returns 90% of the population, add 10% random later
+    #print(f"Passed to CA: {len(offspring + elitesOffspring + elites)}")
+
+    return offspring + elitesOffspring + elites
 
 
 
@@ -169,7 +229,8 @@ def plot(maxReward, avgReward, allReward, gCounter):
                     str(config['breedType']) + '_' +
                     str(config['votingMethod']) + '_' +
                     str(config['mutationRatio']) + '_' +
-                    str(config['cutSize']) + '_' +
+                    str(config['elitRatio']) + '_' +
+                    str(config['midleClassRatio']) + '_' +
                     datetime.datetime.now().strftime("%d.%m.%Y_%H.%M.%S"))
 
         fig.savefig('plots/' + fileName + '.png', dpi=300, bbox_inches='tight')

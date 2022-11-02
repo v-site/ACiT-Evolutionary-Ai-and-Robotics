@@ -24,5 +24,5 @@ elitRatio: 0.1 #the elite of the
 midleClassRatio: 0.8 #percentage of the whole population (the differencce between elite-ratio and midleclass wil make the random)
 
 #ploting parameters
-plotFrequency: 100 #plot every x generations, set equal to generations to only plot at the end of runtime
+plotFrequency: 10 #plot every x generations, set equal to generations to only plot at the end of runtime
 polyFactor: 5
