@@ -22,7 +22,7 @@ config = get_config()
 
 
 def generate_initial_batch(batchSize):
-
+    
     parentGenomes = []
 
     for _ in range(batchSize):
@@ -209,19 +209,24 @@ def breed(candidates):
 
 
 def evolve(parents):
-
+    #print(len(parents))
     Pn = len(parents) #number of elites
-    elites = list(map(itemgetter(0), parents))[int(Pn*(1-config['elitRatio'])):]
-    midleClass = parents[:int(Pn*(1-config['elitRatio']))]
+    elites = list(map(itemgetter(0), parents))[int(Pn*(1-config['elitRatio'])):] 
+    #print(len(elites))
+    midleClass = parents[:int(Pn*(1-config['midleClassRatio']))]                        
+    #print(len(midleClass))
     offspring = []
-
-    offspring+=mutate(elites[:int(len(elites)*0.2)]) #some elites will mutate
-
-    offspring+=breed(elites[int(len(elites)*0.2):]) #elits will breed
+    elitesOffspring = []
+    elitesOffspring+=breed(elites[int(len(elites)*0.2):]) #elits will breed
+    #print(len(offspring))                           #gives 16 elites
+    elitesOffspring+=mutate(elites[:int(len(elites)*0.2)]) #some elites will spontaneous mutate       #gives 4
+    #print(len(offspring))
+    
+    
     
     #run tournament for the rest
     Mn =len(midleClass)
-    for _ in range(int(Pn*config['midleClassRatio'])):
+    for _ in range(int((Pn*config['midleClassRatio'])-len(elitesOffspring))):
         rivals  = []
         for _ in range(random.randint(2, Mn-1)):
             rivals.append(midleClass[random.randint(0, Mn-1)])
@@ -238,9 +243,12 @@ def evolve(parents):
         
     
 
-   
+    #print(f"Elite offsprings:           {len(elitesOffspring)}")
+    #print(f"Midle class offspring:      {len(offspring)}")
+    #print(f"Elite passed to next gen:   {len(elitesOffspring)}")
     #returns 90% of the population, add 10% random later
-    return offspring
+    #print(f"Passed to CA: {len(offspring + elitesOffspring + elites)}")
+    return offspring + elitesOffspring + elites
 
 
 
@@ -304,7 +312,8 @@ def plot(maxReward, avgReward, allReward, gCounter):
                     str(config['breedType']) + '_' +
                     str(config['votingMethod']) + '_' +
                     str(config['mutationRatio']) + '_' +
-                    str(config['cutSize']) + '_' +
+                    str(config['elitRatio']) + '_' +
+                    str(config['midleClassRatio']) + '_' +
                     datetime.datetime.now().strftime("%d.%m.%Y_%H.%M.%S"))
 
         fig.savefig('plots/' + fileName + '.png', dpi=300, bbox_inches='tight')
