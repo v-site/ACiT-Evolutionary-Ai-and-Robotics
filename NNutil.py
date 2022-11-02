@@ -2,7 +2,6 @@ import numpy as np
 import datetime
 import random
 from operator import itemgetter
-from timeit import default_timer as timer
 import yaml
 from yaml.loader import SafeLoader
 
@@ -110,18 +109,18 @@ def evolve(parents):
 
 
 
-def plot(maxReward, avgReward, generationList):
+def plot(maxReward, avgReward, allReward, gCounter):
 
     top25 = []
     polyX = []
 
-    for i in range(len(generationList)):
+    for i in range(gCounter):
 
         polyX.append(i)
 
-        generationList[i].sort()
+        allReward[i].sort()
 
-        top25.append(np.average(generationList[i][int(len(generationList[i])*0.8):]))
+        top25.append(np.average(allReward[i][int(len(allReward[i])*0.75):]))
 
 
 
@@ -144,11 +143,9 @@ def plot(maxReward, avgReward, generationList):
     ax.plot(line, maxModel(line), color='red'   , linestyle='dashed')
     ax.plot(line, avgModel(line), color='orange', linestyle='dashed')
 
+    for i in range(gCounter):
 
-
-    for i in range(len(generationList)):
-
-        ax.scatter([i]*len(generationList[i]), generationList[i], color='blue', s=1)
+        ax.scatter([i]*config['populationSize'], allReward[i], color='blue', s=1)
 
 
 
@@ -159,7 +156,7 @@ def plot(maxReward, avgReward, generationList):
 
 
 
-    if (len(generationList) == config['generations']):
+    if (gCounter == config['generations']):
         fileName = (str(config['seed']) + '_' +
                     str(config['worldWidth']) + '_' +
                     str(config['windowLength']) + '_' +

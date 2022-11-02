@@ -4,33 +4,22 @@ import numpy as np
 from operator import itemgetter
 from timeit import default_timer as timer
 
-
-#initate
-
 config = NNutil.get_config()
-
-env = gym.make("CartPole-v1")
-observation, info = env.reset()
-learningTreshold = False
-patience = 10
-
-
 
 parentGenomes = NNutil.generate_initial_batch(config['populationSize'])
 
-generationList = []
-
-startTime = timer()
-simTime = []
-
+allReward = [[] for _ in range(config['generations'])]
 maxReward = []
 avgReward = []
+simTime = []
 
+env = gym.make("CartPole-v1")
+observation, info = env.reset()
 
+startTime = timer()
 
 for gCounter in range(config['generations']):
 
-    parentResults = []
     parents = []
 
     t = timer()
@@ -57,9 +46,9 @@ for gCounter in range(config['generations']):
 
         avgGenomeReward = round((totReward/config['maxAttempts']), 1)
 
-        parentResults.append(avgGenomeReward)
+        allReward[gCounter].append(avgGenomeReward)
 
-        parents.append([parentGenomes[n], parentResults[n]])
+        parents.append([parentGenomes[n], allReward[gCounter][n]])
 
 
 
@@ -69,13 +58,11 @@ for gCounter in range(config['generations']):
 
     parentGenomes = NNutil.evolve(parents)
 
-    parentGenomes = np.vstack((parentGenomes, NNutil.generate_initial_batch(config['populationSize']-len(parentGenomes))))
+    parentGenomes += NNutil.generate_initial_batch(config['populationSize']-len(parentGenomes))
 
     maxReward.append(list(map(itemgetter(1), parents))[-1])
 
-    avgReward.append(round(np.average(parentResults), 1))
-
-    generationList.append(parentResults)
+    avgReward.append(round(np.average(allReward[gCounter]), 1))
 
 
 
@@ -85,19 +72,10 @@ for gCounter in range(config['generations']):
 
         print(parents[-1][0])
 
-    if (gCounter > patience-1) and learningTreshold:
-
-        avgLearningRate = np.average(np.diff(parentResults[-patience:]))
-
-        print(f"learning th: {learningTreshold}, based on {parentResults[-patience:]}, avg learning rate: {avgLearningRate}")
-
-        if abs(avgLearningRate) < abs(learningTreshold):
-
-            break
-
     if (gCounter == config['generations']-1 or (gCounter+1) % config['plotFrequency'] == 0):
 
-        NNutil.plot(maxReward, avgReward, generationList)
+        NNutil.plot(maxReward, avgReward, allReward, gCounter+1)
+
 
 
 print(parents[-1][0])
