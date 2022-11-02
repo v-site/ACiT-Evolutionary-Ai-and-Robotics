@@ -42,7 +42,7 @@ for gCounter in range(config['generations']):
         for _ in range(config['maxAttempts']):
 
             for i in range(config['maxSteps']):
-                
+
                 observation, reward, terminated, truncated, info = env.step(CAutil.get_action(observation, rules))
 
                 totReward += reward - abs(observation[0])/2.4
@@ -74,17 +74,24 @@ for gCounter in range(config['generations']):
     avgReward.append(round(np.average(allReward[gCounter]), 1))
 
 
-    
+
 
     if maxReward[gCounter] > 450:
 
         logEntry = [str(gCounter+1).zfill(3), maxReward[gCounter], avgReward[gCounter] , round(timer()-startTime, 1), simTime[gCounter], parents[-1][0]]
+
         CAutil.write_logs(fileName=fileName,logEntry=logEntry)
+
         print(f"Gen: {str(gCounter+1).zfill(3)} maxR: {maxReward[gCounter]} avgR {avgReward[gCounter]} dT: {round(timer()-startTime, 1)} aT: {simTime[gCounter]}ms Genome: {parents[-1][0]}")
 
-    logEntry = [str(gCounter+1).zfill(3), maxReward[gCounter], avgReward[gCounter] , round(timer()-startTime, 1), simTime[gCounter], 'null']
-    print(f"Gen: {str(gCounter+1).zfill(3)} maxR: {maxReward[gCounter]} avgR {avgReward[gCounter]} dT: {round(timer()-startTime, 1)} aT: {simTime[gCounter]}ms")
-    CAutil.write_logs(fileName=fileName,logEntry=logEntry)
+    else:
+
+        logEntry = [str(gCounter+1).zfill(3), maxReward[gCounter], avgReward[gCounter] , round(timer()-startTime, 1), simTime[gCounter], 'null']
+
+        CAutil.write_logs(fileName=fileName,logEntry=logEntry)
+
+        print(f"Gen: {str(gCounter+1).zfill(3)} maxR: {maxReward[gCounter]} avgR {avgReward[gCounter]} dT: {round(timer()-startTime, 1)} aT: {simTime[gCounter]}ms")
+
 
 
     if (gCounter == config['generations']-1 or (gCounter+1) % config['plotFrequency'] == 0):
