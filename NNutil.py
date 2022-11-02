@@ -1,11 +1,14 @@
+from fileinput import filename
 import numpy as np
 import datetime
 import random
 from operator import itemgetter
 import yaml
 from yaml.loader import SafeLoader
-
 import matplotlib.pyplot as plt
+import os
+import csv
+
 
 
 
@@ -217,7 +220,11 @@ def plot(maxReward, avgReward, allReward, gCounter):
 
 
     if (gCounter == config['generations']):
-        fileName = (str(config['seed']) + '_' +
+        fileName = get_filename()
+        fig.savefig('plots/' + fileName + '.png', dpi=300, bbox_inches='tight')
+
+def get_filename():
+    fileName = (str(config['seed']) + '_' +
                     str(config['worldWidth']) + '_' +
                     str(config['windowLength']) + '_' +
                     str(config['windowSpacing']) + '_' +
@@ -232,5 +239,15 @@ def plot(maxReward, avgReward, allReward, gCounter):
                     str(config['elitRatio']) + '_' +
                     str(config['midleClassRatio']) + '_' +
                     datetime.datetime.now().strftime("%d.%m.%Y_%H.%M.%S"))
+    return fileName
 
-        fig.savefig('plots/' + fileName + '.png', dpi=300, bbox_inches='tight')
+def write_logs(fileName, logEntry):
+    f = open(fileName , 'a', newline='')
+    # create the csv writer
+    writer = csv.writer(f,delimiter=',')
+
+    # write a row to the csv file
+    writer.writerow(logEntry)
+
+    # close the file
+    f.close()

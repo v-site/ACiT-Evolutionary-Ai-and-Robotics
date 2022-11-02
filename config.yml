@@ -13,7 +13,7 @@ iterations: 3 #Iterations over the search window, before action is taken
 
 
 #EA- Optimization hyper-parameters
-generations: 300 #Defines the ammounts of epochs for the evolutionary algorithm
+generations: 200 #Defines the ammounts of epochs for the evolutionary algorithm
 populationSize: 100 #should be divisible by crossover ratio
 maxAttempts: 3 #maximum attempts to controll the cart pole
 maxSteps: 500 #The max steps the CA can controll the cartPole

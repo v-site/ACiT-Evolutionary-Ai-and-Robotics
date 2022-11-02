@@ -1,8 +1,11 @@
+from ctypes import util
 import gym
 import NNutil
 import numpy as np
 from operator import itemgetter
 from timeit import default_timer as timer
+import csv
+import os
 
 config = NNutil.get_config()
 
@@ -17,6 +20,11 @@ env = gym.make("CartPole-v1")
 observation, info = env.reset()
 
 startTime = timer()
+
+#initiate log
+fileName = os.path.join('logs',  NNutil.get_filename() +'.txt')
+header = ['gen', 'maxR', 'avgR' , 'dT', 'aT(ms)', 'best_genome_over_450']
+NNutil.write_logs(fileName = fileName, logEntry = header)
 
 for gCounter in range(config['generations']):
 
@@ -66,11 +74,23 @@ for gCounter in range(config['generations']):
 
 
 
-    print(f"Gen: {str(gCounter+1).zfill(3)} maxR: {maxReward[gCounter]} avgR {avgReward[gCounter]} dT: {round(timer()-startTime, 1)} aT: {simTime[gCounter]}ms")
-
     if maxReward[gCounter] > 450:
 
-        print(parents[-1][0])
+        logEntry = [str(gCounter+1).zfill(3), maxReward[gCounter], avgReward[gCounter] , round(timer()-startTime, 1), simTime[gCounter], parents[-1][0]]
+
+        NNutil.write_logs(fileName=fileName,logEntry=logEntry)
+
+        print(f"Gen: {str(gCounter+1).zfill(3)} maxR: {maxReward[gCounter]} avgR {avgReward[gCounter]} dT: {round(timer()-startTime, 1)} aT: {simTime[gCounter]}ms Genome: {parents[-1][0]}")
+
+    else:
+
+        logEntry = [str(gCounter+1).zfill(3), maxReward[gCounter], avgReward[gCounter] , round(timer()-startTime, 1), simTime[gCounter], 'null']
+
+        NNutil.write_logs(fileName=fileName,logEntry=logEntry)
+
+        print(f"Gen: {str(gCounter+1).zfill(3)} maxR: {maxReward[gCounter]} avgR {avgReward[gCounter]} dT: {round(timer()-startTime, 1)} aT: {simTime[gCounter]}ms")
+
+
 
     if (gCounter == config['generations']-1 or (gCounter+1) % config['plotFrequency'] == 0):
 
