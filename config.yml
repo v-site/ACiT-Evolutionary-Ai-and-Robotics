@@ -20,8 +20,8 @@ maxSteps: 500 #The max steps the CA can controll the cartPole
 breedType: 'uniform' # ['one-point', 'two-point',  'uniform']
 votingMethod: 'equal_split' # ['majority', 'equal_split']
 mutationRatio: 0.01 #the posibility of a single bit in the child genome fliping state
-elitRatio: 0.2 #the elite of the
-midleClassRatio: 0.7 #percentage of the whole population (the differencce between elite-ratio and midleclass wil make the random)
+elitRatio: 0.4 #the elite of the
+midleClassRatio: 0.5 #percentage of the whole population (the differencce between elite-ratio and midleclass wil make the random)
 
 #ploting parameters
 plotFrequency: 10 #plot every x generations, set equal to generations to only plot at the end of runtime
