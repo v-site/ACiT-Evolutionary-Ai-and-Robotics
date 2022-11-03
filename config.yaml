@@ -17,9 +17,9 @@ maxSteps: 500               #Defines the number of steps the CA can run before b
 breedType: 'uniform'        #Defines the type of crossover method used in generating offspring, and can be set to 'one-point', 'two-point', or 'uniform'.
 votingMethod: 'equal_split' #Defines what method is used to decide the action taken based on the final state of the CA world, and can be set to either 'majority' or 'equal_split'.
 mutationRatio: 0.01         #Defines the chance of each individual bit in the genome to flip its state when generating mutation offspring.
-elitRatio: 0.0              #Defines the percentage of elite genomes and their genome that proceed to the next generation. At a population of 100, an eliteRatio equal to 0.2 would allow the top 10 genomes to make 10 children, and together be passed to the next generation.
-midleClassRatio: 0.9        #Defines the number of children created from all genomes except elites through tournament selection.
+elitRatio: 0.2              #Defines the percentage of elite genomes and their genome that proceed to the next generation. At a population of 100, an eliteRatio equal to 0.2 would allow the top 10 genomes to make 10 children, and together be passed to the next generation.
+midleClassRatio: 0.6        #Defines the number of children created from all genomes except elites through tournament selection.
 
 #Plot
-plotFrequency: 200          #Defines the number of generations to be run before updating the plot. If set greater or equal to the generation number, the plot function is only called once at the end of the program.
+plotFrequency: 10           #Defines the number of generations to be run before updating the plot. If set greater or equal to the generation number, the plot function is only called once at the end of the program.
 polyFactor: 5               #Defines the smoothing factor applied to the line plots.
