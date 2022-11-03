@@ -1,28 +1,25 @@
 #Hyper paramaters
-#global
-seed: 42
 
+#Sim
+seed: 42                    #Generally set to 'null', the seed can be set to any integer and is responsible for the initial state of the cart pole. Configuring the seed allows each genome to be run in the same conditions. This is not recommended for training but can be a valuable resource when comparing the performance of individual genomes.
 
+#CA
+worldWidth: 15              #Defines the length of the bit-string used to encode each observation.
+windowLength: 7             #Defines the length of the sliding window (neigbourhood) used to apply rules in the CA world, must be odd (3 gives a genome length of 8 bit (2^3), 5; 32, 7; 128, 9; 256, 12; 1024)
+windowSpacing: 5            #Defines the number of empty (zero) cells between each observation string in the CA world.
+iterations: 6               #Defines the number of times the sliding window is passed over the CA world to generate the final string.
 
-#CA_world_parameters:
-worldWidth: 15 #
-windowLength: 7 #neigbourhood, must be odd (3 gives a genome length of 8 bit (2^3), 5; 32, 7; 128, 9; 256, 12; 1024)
-windowSpacing: 5 #number of empty (zero) celles between each observation string in the world map
-#CA_action
-iterations: 6 #Iterations over the search window, before action is taken
+#EA
+generations: 200            #Defines the number of generation to be run before exiting the program.
+populationSize: 100         #Defines the number of individuals to be tested each generation. Should be divissible by 10
+maxAttempts: 3              #Defines the maximum number of attempts the agent gets to control the cart pole before moving on to the next one.
+maxSteps: 500               #Defines the number of steps the CA can run before being terminated, even if the agent has yet to fail.
+breedType: 'uniform'        #Defines the type of crossover method used in generating offspring, and can be set to 'one-point', 'two-point', or 'uniform'.
+votingMethod: 'equal_split' #Defines what method is used to decide the action taken based on the final state of the CA world, and can be set to either 'majority' or 'equal_split'.
+mutationRatio: 0.01         #Defines the chance of each individual bit in the genome to flip its state when generating mutation offspring.
+elitRatio: 0.0              #Defines the percentage of elite genomes and their genome that proceed to the next generation. At a population of 100, an eliteRatio equal to 0.2 would allow the top 10 genomes to make 10 children, and together be passed to the next generation.
+midleClassRatio: 0.9        #Defines the number of children created from all genomes except elites through tournament selection.
 
-
-#EA- Optimization hyper-parameters
-generations: 200 #Defines the ammounts of epochs for the evolutionary algorithm
-populationSize: 100 #should be divisible by crossover ratio
-maxAttempts: 3 #maximum attempts to controll the cart pole
-maxSteps: 500 #The max steps the CA can controll the cartPole
-breedType: 'uniform' # ['one-point', 'two-point',  'uniform']
-votingMethod: 'equal_split' # ['majority', 'equal_split']
-mutationRatio: 0.01 #the posibility of a single bit in the child genome fliping state
-elitRatio: 0.0 #the elite of the
-midleClassRatio: 0.9 #percentage of the whole population (the differencce between elite-ratio and midleclass wil make the random)
-
-#ploting parameters
-plotFrequency: 200 #plot every x generations, set equal to generations to only plot at the end of runtime
-polyFactor: 5
+#Plot
+plotFrequency: 200          #Defines the number of generations to be run before updating the plot. If set greater or equal to the generation number, the plot function is only called once at the end of the program.
+polyFactor: 5               #Defines the smoothing factor applied to the line plots.
