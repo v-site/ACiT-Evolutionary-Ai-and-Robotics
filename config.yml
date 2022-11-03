@@ -1,0 +1,28 @@
+#Hyper paramaters
+#global
+seed: 42
+
+
+
+#CA_world_parameters:
+worldWidth: 15 #
+windowLength: 7 #neigbourhood, must be odd (3 gives a genome length of 8 bit (2^3), 5; 32, 7; 128, 9; 256, 12; 1024)
+windowSpacing: 5 #number of empty (zero) celles between each observation string in the world map
+#CA_action
+iterations: 6 #Iterations over the search window, before action is taken
+
+
+#EA- Optimization hyper-parameters
+generations: 200 #Defines the ammounts of epochs for the evolutionary algorithm
+populationSize: 100 #should be divisible by crossover ratio
+maxAttempts: 3 #maximum attempts to controll the cart pole
+maxSteps: 500 #The max steps the CA can controll the cartPole
+breedType: 'uniform' # ['one-point', 'two-point',  'uniform']
+votingMethod: 'equal_split' # ['majority', 'equal_split']
+mutationRatio: 0.01 #the posibility of a single bit in the child genome fliping state
+elitRatio: 0.0 #the elite of the
+midleClassRatio: 0.9 #percentage of the whole population (the differencce between elite-ratio and midleclass wil make the random)
+
+#ploting parameters
+plotFrequency: 200 #plot every x generations, set equal to generations to only plot at the end of runtime
+polyFactor: 5
