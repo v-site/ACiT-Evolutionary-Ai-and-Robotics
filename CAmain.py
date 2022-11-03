@@ -1,6 +1,6 @@
 from ctypes import util
 import gym
-import CAutil
+import src.CAutil as CAutil
 import numpy as np
 from operator import itemgetter
 from timeit import default_timer as timer
@@ -48,9 +48,10 @@ for gCounter in range(config['generations']):
                 totReward += reward - abs(observation[0])/2.4
 
                 if terminated or truncated:
-
-                    observation, info = env.reset(seed = (config['seed'] + gCounter + 1 + i))
-
+                    if config['seed']:
+                        observation, info = env.reset(seed = (config['seed'] + gCounter + 1 + i))
+                    else:
+                        observation, info = env.reset()
                     break
 
         avgGenomeReward = round((totReward/config['maxAttempts']), 1)

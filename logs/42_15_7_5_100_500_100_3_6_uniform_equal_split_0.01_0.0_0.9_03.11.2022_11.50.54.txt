@@ -1,2 +1,0 @@
-gen,maxR,avgR,dT,aT(ms),best_genome_over_450
-001,122.3,21.3,3.7,37.3,null

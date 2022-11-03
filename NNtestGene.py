@@ -1,5 +1,5 @@
 import gym
-import NNutil
+import src.NNutil as NNutil
 
 genome = [0.83151852849641, 0.5667395410331488, 1.0377943781978949, 0.9111872106718677]
 #1.84858023, 0.36366978, 0.50911942, 0.68024333
@@ -17,7 +17,7 @@ for _ in range(config['maxAttempts']):
 
     for _ in range(5000):
 
-        observation, reward, terminated, truncated, info = env.step(NNutil.get_action(observation))
+        observation, reward, terminated, truncated, info = env.step(NNutil.get_action(observation,genome=genome))
 
         totReward += 1
 

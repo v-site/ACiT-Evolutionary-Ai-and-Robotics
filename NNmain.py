@@ -1,6 +1,6 @@
 from ctypes import util
 import gym
-import NNutil
+import src.NNutil as NNutil
 import numpy as np
 from operator import itemgetter
 from timeit import default_timer as timer

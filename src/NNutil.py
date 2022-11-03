@@ -119,29 +119,27 @@ def breed(candidates):
 def evolve(parents):
 
     #print(len(parents))
-
+    
     Pn = len(parents) #number of elites
+    elites =[]
+    offspring = []
+    elitesOffspring = []
+    if config['elitRatio']>0:
+        elites = list(map(itemgetter(0), parents))[int(Pn*(1-config['elitRatio'])):]
 
-    elites = list(map(itemgetter(0), parents))[int(Pn*(1-config['elitRatio'])):]
+        #print(len(elites))
 
-    #print(len(elites))
+        elitesOffspring += breed(elites[int(len(elites)*0.2):]) #elits will breed
+
+        #print(len(elitesOffspring))                           #gives 16 elites
+
+        elitesOffspring += mutate(elites[:int(len(elites)*0.2)]) #some elites will spontaneous mutate       #gives 4
+
+        #print(len(elitesOffspring))
 
     midleClass = parents[:int(Pn*(1-config['elitRatio']))]
 
-    #print(len(midleClass))
-
-    offspring = []
-    elitesOffspring = []
-
-    elitesOffspring += breed(elites[int(len(elites)*0.2):]) #elits will breed
-
-    #print(len(elitesOffspring))                           #gives 16 elites
-
-    elitesOffspring += mutate(elites[:int(len(elites)*0.2)]) #some elites will spontaneous mutate       #gives 4
-
-    #print(len(elitesOffspring))
-
-
+        #print(len(midleClass))
 
     #run tournament for the rest
     Mn = len(midleClass)

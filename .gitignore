@@ -1,2 +1,4 @@
-
-*.pyc
+/.vs
+/*.pyc
+__pycache__
+.vs
