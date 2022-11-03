@@ -13,12 +13,19 @@ patience = 10
 
 for _ in range(config['maxAttempts']):
 
-    for _ in range(config['maxSteps']):
+    totReward = 0
 
-        observation, reward, terminated, truncated, info = env.step(NNutil.get_action(observation, genome))
+    for _ in range(5000):
 
-        if terminated or truncated:
+        observation, reward, terminated, truncated, info = env.step(NNutil.get_action(observation))
 
+        totReward += 1
+
+        if terminated:
             observation, info = env.reset()
+            break
+
+    print(totReward)
+
 
 env.close()

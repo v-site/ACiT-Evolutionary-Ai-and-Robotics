@@ -17,15 +17,15 @@ maxReward = []
 avgReward = []
 simTime = []
 
-env = gym.make("CartPole-v1")
-observation, info = env.reset(seed= config['seed'])
-
-startTime = timer()
-
 #initiate log
 fileName = os.path.join('logs',  CAutil.get_filename() +'.txt')
 header = ['gen', 'maxR', 'avgR' , 'dT', 'aT(ms)', 'best_genome_over_450']
 CAutil.write_logs(fileName = fileName, logEntry = header)
+
+env = gym.make("CartPole-v1")
+observation, info = env.reset(seed= config['seed'])
+
+startTime = timer()
 
 for gCounter in range(config['generations']):
 
