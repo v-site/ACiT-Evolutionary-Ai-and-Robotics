@@ -5,6 +5,6 @@
 
 ### Instructions:
 - The CAmain.py and NNmain.py runs an EA algorithm to find the control paramaters
-- CAtest.py and NNtest.py are visualizations of the EA derived controller-paramaters performance
+- CAtestGene.py and NNtestGene.py are visualizations of the EA derived controller-paramaters performance
 
 
