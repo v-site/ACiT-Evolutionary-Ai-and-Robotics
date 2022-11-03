@@ -13,16 +13,16 @@ iterations: 6 #Iterations over the search window, before action is taken
 
 
 #EA- Optimization hyper-parameters
-generations: 200 #Defines the ammounts of epochs for the evolutionary algorithm
+generations: 100 #Defines the ammounts of epochs for the evolutionary algorithm
 populationSize: 100 #should be divisible by crossover ratio
 maxAttempts: 3 #maximum attempts to controll the cart pole
 maxSteps: 500 #The max steps the CA can controll the cartPole
 breedType: 'uniform' # ['one-point', 'two-point',  'uniform']
 votingMethod: 'equal_split' # ['majority', 'equal_split']
 mutationRatio: 0.01 #the posibility of a single bit in the child genome fliping state
-elitRatio: 0.2 #the elite of the
-midleClassRatio: 0.7 #percentage of the whole population (the differencce between elite-ratio and midleclass wil make the random)
+elitRatio: 0.0 #the elite of the
+midleClassRatio: 0.9 #percentage of the whole population (the differencce between elite-ratio and midleclass wil make the random)
 
 #ploting parameters
-plotFrequency: 10 #plot every x generations, set equal to generations to only plot at the end of runtime
+plotFrequency: 200 #plot every x generations, set equal to generations to only plot at the end of runtime
 polyFactor: 5

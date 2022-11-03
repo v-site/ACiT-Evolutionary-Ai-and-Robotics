@@ -22,7 +22,7 @@ observation, info = env.reset()
 startTime = timer()
 
 #initiate log
-fileName = os.path.join('logs',  NNutil.get_filename() +'.txt')
+fileName = os.path.join('logs',  'NN'+ NNutil.get_filename() +'.txt')
 header = ['gen', 'maxR', 'avgR' , 'dT', 'aT(ms)', 'best_genome_over_450']
 NNutil.write_logs(fileName = fileName, logEntry = header)
 
