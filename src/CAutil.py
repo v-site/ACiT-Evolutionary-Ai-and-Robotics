@@ -9,6 +9,7 @@ from yaml.loader import SafeLoader
 
 
 
+# opens the config file and returns a dictionary of all parameters
 def get_config():
 
     with open('config.yaml') as f:
@@ -17,10 +18,12 @@ def get_config():
 
 
 
+# stores the dictionary globaly
 config = get_config()
 
 
 
+# generates random genes
 def generate_initial_batch(batchSize):
 
     parentGenomes = []
