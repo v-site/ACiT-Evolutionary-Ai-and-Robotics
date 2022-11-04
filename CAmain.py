@@ -65,7 +65,7 @@ for gCounter in range(config['generations']):
 
     parentGenomes = CAutil.evolve(parents)
 
-    parentGenomes += CAutil.generate_initial_batch(config['populationSize'] - len(parentGenomes)) #something fishy with this when it gets a negative number!
+    parentGenomes += CAutil.generate_initial_batch(config['populationSize'] - len(parentGenomes))
 
     maxReward.append(list(map(itemgetter(1), parents))[-1])
 

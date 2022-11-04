@@ -5,7 +5,6 @@ import src.NNutil as NNutil
 from operator import itemgetter
 from timeit import default_timer as timer
 
-
 config = NNutil.get_config()
 
 parentGenomes = NNutil.generate_initial_batch(config['populationSize'])
@@ -65,7 +64,7 @@ for gCounter in range(config['generations']):
 
     parentGenomes = NNutil.evolve(parents)
 
-    parentGenomes.extend(NNutil.generate_initial_batch(config['populationSize'] - len(parentGenomes))) #something fishy with this when it gets a negative number!
+    parentGenomes.extend(NNutil.generate_initial_batch(config['populationSize'] - len(parentGenomes))) 
 
     maxReward.append(list(map(itemgetter(1), parents))[-1])
 
