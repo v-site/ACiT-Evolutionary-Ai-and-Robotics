@@ -38,6 +38,7 @@ def generate_initial_batch(batchSize):
 
 
 
+# constructs the list of all possible neighborhoods with the current windowLength 
 def set_condition_list():
 
     conditionList = []
@@ -50,6 +51,7 @@ def set_condition_list():
 
 
 
+# converts the genome into a list of bits to be zipped to the condittionList
 def initialize_rules(genome):
 
     if isinstance(genome, int):
@@ -59,11 +61,13 @@ def initialize_rules(genome):
     return list(map(int, genome))
 
 
+
+# construts the world map by interpolating observation within the available bits in worldWidth
 def initialize_world(observation):
 
-    #https://www.gymlibrary.dev/environments/classic_control/cart_pole/
+    # https://www.gymlibrary.dev/environments/classic_control/cart_pole/
 
-    #Observation values: [CartPos, CartVel, PoleAngle, PoleAngleVel]
+    # Observation values: [CartPos, CartVel, PoleAngle, PoleAngleVel]
 
     minVals = [-2.4, -4, -0.2095, -4]
     maxVals = [ 2.4,  4,  0.2095,  4]
@@ -78,6 +82,7 @@ def initialize_world(observation):
 
             worldMap.append(1) if n == flipper else worldMap.append(0)
 
+        # makes sure there is no spacing after the last observation
         if i == len(observation) - 1:
             continue
 
@@ -89,6 +94,7 @@ def initialize_world(observation):
 
 
 
+# appends fixed boundries and applies the ruleset to the world map n times eqal to iterations
 def apply_rules(worldMap, rules):
 
     edgeWidth = int((config['windowLength'] - 1) / 2)
@@ -110,8 +116,10 @@ def apply_rules(worldMap, rules):
 
 
 
+# decides the action taken based on votingMethod 
 def voting(processedMap):
 
+    # finds the side with most instances of '1'
     if config['votingMethod'] == 'equal_split':
 
         l = int(len(processedMap) / 2)
@@ -127,7 +135,8 @@ def voting(processedMap):
         if sumHead > sumTail:
 
             return 0
-
+    
+    # determines if there are more occurances of '1' or '0
     elif config['votingMethod'] == 'majority':
 
         if processedMap.count('1') <= processedMap.count('0'):
@@ -138,6 +147,7 @@ def voting(processedMap):
 
 
 
+# concatinates all required functions needed to aquire an action
 def get_action(observation, rules):
 
     worldMap = initialize_world(observation)
@@ -150,11 +160,12 @@ def get_action(observation, rules):
 
 
 
+# mutates (bitflip) candidates based on mutationRatio
 def mutate(candidates):
 
     offspring = []
 
-    Pl = len(list(candidates[0]))#genome length
+    Pl = len(list(candidates[0]))
 
     for i in range(len(candidates)):
 
@@ -172,14 +183,16 @@ def mutate(candidates):
 
 
 
+# crossbreeds candidates based on breedType
 def breed(candidates):
 
     offspring = []
 
-    Pn = len(candidates) #number of elites
-    Pl = len(list(candidates[0])) #length of genomes
+    Pn = len(candidates)
+    Pl = len(list(candidates[0]))
 
-    if config['breedType'] == 'one-point': #parent genome split in two and added together
+    # parent genome split in two and added together
+    if config['breedType'] == 'one-point':
 
         for i in range(Pn):
 
@@ -191,7 +204,8 @@ def breed(candidates):
 
             offspring.append(''.join(c))
 
-    if config['breedType'] == 'two-point': #parent genome split in three and added together
+    # parent genome split in three and added together
+    if config['breedType'] == 'two-point': 
 
         for i in range(Pn):
 
@@ -201,8 +215,9 @@ def breed(candidates):
             c = p1[: int(Pl * 0.25)] + p2[int(Pl * 0.25) : int(Pl * 0.75)] + p1[int(Pl * 0.75) :]
 
             offspring.append(''.join(c))
-
-    if config['breedType'] == 'uniform': #randomly insert genom-element from each of the candidates
+    
+    # randomly insert genom-element from each of the candidates
+    if config['breedType'] == 'uniform': 
 
         for i in range(Pn):
 
@@ -220,6 +235,7 @@ def breed(candidates):
 
 
 
+# evolve genomes from last generation 
 def evolve(parents):
 
     elites =[]
@@ -228,18 +244,20 @@ def evolve(parents):
 
     Pn = len(parents)
 
+    # separates out the elites if required
     if config['elitRatio'] > 0:
 
         elites = list(map(itemgetter(0), parents))[int(Pn * (1 - config['elitRatio'] / 2)) :]
 
-        elitesOffspring += breed(elites[int(len(elites) * 0.2) :]) #elits will breed
+        elitesOffspring += breed(elites[int(len(elites) * 0.2) :])
 
-        elitesOffspring += mutate(elites[: int(len(elites) * 0.2)]) #some elites will spontaneous mutate       #gives 4
+        elitesOffspring += mutate(elites[: int(len(elites) * 0.2)])
 
     midleClass = parents[: int(Pn * (1 - config['elitRatio']))]
 
     Mn = len(midleClass)
-
+    
+    # turnament seletion for the privelage of breeding
     for _ in range(int((Pn * config['midleClassRatio']))):
 
         rivals  = []
@@ -260,6 +278,7 @@ def evolve(parents):
 
 
 
+# plots all data gathered so far
 def plot(maxReward, avgReward, allReward, gCounter):
 
     top25 = []
@@ -316,6 +335,7 @@ def plot(maxReward, avgReward, allReward, gCounter):
 
 
 
+# creates a string based on parameters used as filename for plot ad log
 def get_filename():
 
     fileName = (str(config['seed']) + '_' +
@@ -338,6 +358,7 @@ def get_filename():
 
 
 
+# writes the logfile
 def write_logs(fileName, logEntry):
 
     # creates or opens file

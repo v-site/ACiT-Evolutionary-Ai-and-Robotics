@@ -28,7 +28,7 @@ def generate_initial_batch(batchSize):
     return np.random.randn(batchSize, 4)
 
 
-
+# interpolates observations and multiplys by the weights to determin action taken
 def get_action(observation, genome):
 
     minVals = [-2.4, -4, -0.2095, -4]
@@ -50,6 +50,7 @@ def get_action(observation, genome):
 
 
 
+# mutates (random multiplication) candidates based on mutationRatio
 def mutate(candidates):
 
     offspring = []
@@ -70,14 +71,16 @@ def mutate(candidates):
 
 
 
+# crossbreeds candidates based on breedType
 def breed(candidates):
 
     offspring = []
 
-    Pn = len(candidates) #number of elites
-    Pl = len(list(candidates[0])) #length of
+    Pn = len(candidates)
+    Pl = len(list(candidates[0]))
 
-    if config['breedType'] == 'one-point': #parent genome split in two and added together
+    # parent genome split in two and added together
+    if config['breedType'] == 'one-point':
 
         for i in range(Pn):
 
@@ -88,7 +91,8 @@ def breed(candidates):
 
             offspring.append(c)
 
-    if config['breedType'] == 'two-point': #parent genome split in three and added together
+    # parent genome split in three and added together
+    if config['breedType'] == 'two-point': 
 
         for i in range(Pn):
 
@@ -99,7 +103,8 @@ def breed(candidates):
 
             offspring.append(c)
 
-    if config['breedType'] == 'uniform': #randomly insert genom-element from each of the parents
+    # randomly insert genom-element from each of the parents
+    if config['breedType'] == 'uniform': 
 
         for i in range(Pn):
 
@@ -117,6 +122,7 @@ def breed(candidates):
 
 
 
+# evolve genomes from last generation 
 def evolve(parents):
 
     elites =[]
@@ -125,6 +131,7 @@ def evolve(parents):
 
     Pn = len(parents)
 
+    # separates out the elites if required
     if config['elitRatio'] > 0:
 
         elites = list(map(itemgetter(0), parents))[int(Pn * (1 - config['elitRatio'])) :]
@@ -137,6 +144,7 @@ def evolve(parents):
 
     Mn = len(midleClass)
 
+    # turnament seletion for the privelage of breeding
     for _ in range(int((Pn * config['midleClassRatio']))):
 
         rivals  = []
@@ -157,6 +165,7 @@ def evolve(parents):
 
 
 
+# plots all data gathered so far
 def plot(maxReward, avgReward, allReward, gCounter):
 
     top25 = []
@@ -213,6 +222,7 @@ def plot(maxReward, avgReward, allReward, gCounter):
 
 
 
+# creates a string based on parameters used as filename for plot ad log
 def get_filename():
 
     fileName = (str(config['seed']) + '_' +
@@ -235,6 +245,7 @@ def get_filename():
 
 
 
+# writes the logfile
 def write_logs(fileName, logEntry):
 
     # creates or opens file
