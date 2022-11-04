@@ -1,7 +1,6 @@
+import cv2
 import tempfile
 import numpy as np
-import cv2
-
 from tqdm import tqdm
 
 try:
@@ -9,37 +8,36 @@ try:
 except ImportError:
     import Image
 
+vidcap = cv2.VideoCapture('../VideoResults/2022-10-31 11-58-54.mkv') # loads videofile
+frames = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT)) - 1 # determin number of frames -1 as we want it zero-indexed
+goodFrames = 0 # usable frames
 
-vidcap = cv2.VideoCapture('VideoResults/2021-05-06 15-39-21.mkv')
-frames = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT)) - 1
-f = 0
+with tempfile.TemporaryDirectory() as directory: # creates a temporary directory in AppData\Local\Temp
 
-with tempfile.TemporaryDirectory() as directory:
+    print('Created temporary directory: %s' % directory, '\n') # prints the path to the created directory
 
-    print('Created temporary directory: \n %s' % directory, '\n')
+    for _ in tqdm (range(frames), desc = 'Cleaning'): # runs for-loop with progress bar
 
-    for _ in tqdm (range(frames), desc='Cleaning'):
+        ret, frame = vidcap.read() #reads frame to memmory
 
-        ret,frame = vidcap.read()
+        if not(ret) or np.average(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)) < 20: # checks if the frame exists and does not consist of mostly black (grayscale for computational simplicity)
 
-        if not(ret) or np.average(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)) < 20:
-            continue
+            continue # skips to next loop iteration if bad frame found
 
-        cv2.imwrite(directory + '/frame' + str(f) + '.jpg', frame)
-        f+=1
+        cv2.imwrite(directory + '/frame' + str(goodFrames) + '.jpg', frame) # stores good frames in temp directory
+        goodFrames += 1 # counts stored frames
 
-    print('\n', 'Discarded %d frames' % (frames-f), '\n')
+    print('\nDiscarded %d frames' % (frames - goodFrames), '\n') # prints amount of discarded bad frames
 
-    background = Image.open(directory + '/frame0.jpg')
+    background = Image.open(directory + '/frame0.jpg') # loads first frame as background for stacking
 
-    for n in tqdm (range(f), desc='Stacking'):
+    for n in tqdm (range(goodFrames), desc = 'Stacking'): # runs for-loop with progress bar
 
-        overlay = Image.open(directory + '/frame' + str(n) + '.jpg')
+        foreground = Image.open(directory + '/frame' + str(n) + '.jpg') # loads next frame as foreground for stacking
 
-        new_img = Image.blend(background, overlay, 1/f)
+        new_img = Image.blend(background, foreground, 1 / goodFrames) # blends foreground and backround with a ratio of 1/goodFrames (makes all frames equally visible)
+        new_img.save('../VideoResults/Stack.png', 'PNG') # stores the blended image in the results folder
 
-        new_img.save('VideoResults/Stack.png','PNG')
+        background = Image.open('../VideoResults/stack.png') # loads the blended image as background and repeats
 
-        background = Image.open('VideoResults/Stack.png')
-
-background.show()
+background.show() # opens the final stacked image in native viewer
