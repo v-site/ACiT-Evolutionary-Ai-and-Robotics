@@ -74,13 +74,13 @@ for gCounter in range(config['generations']):
 
     if maxReward[gCounter] > 450:
 
-        logEntry = [str(gCounter + 1 ).zfill(3), maxReward[gCounter], avgReward[gCounter], round(timer()-startTime, 1), simTime[gCounter], parents[-1][0]]
+        logEntry = [str(gCounter + 1 ).zfill(3), maxReward[gCounter], avgReward[gCounter], round(timer() - startTime, 1), simTime[gCounter], parents[-1][0]]
 
         print(f"Gen: {str(gCounter+1).zfill(3)} maxR: {maxReward[gCounter]} avgR {avgReward[gCounter]} dT: {round(timer()-startTime, 1)} aT: {simTime[gCounter]}ms Genome: {parents[-1][0]}")
 
     else:
 
-        logEntry = [str(gCounter + 1).zfill(3), maxReward[gCounter], avgReward[gCounter], round(timer()-startTime, 1), simTime[gCounter], 'null']
+        logEntry = [str(gCounter + 1).zfill(3), maxReward[gCounter], avgReward[gCounter], round(timer() - startTime, 1), simTime[gCounter], 'null']
 
         print(f"Gen: {str(gCounter+1).zfill(3)} maxR: {maxReward[gCounter]} avgR {avgReward[gCounter]} dT: {round(timer()-startTime, 1)} aT: {simTime[gCounter]}ms")
 
@@ -90,6 +90,6 @@ for gCounter in range(config['generations']):
 
 
 
-    if (gCounter == config['generations']-1 or (gCounter+1) % config['plotFrequency'] == 0):
+    if (gCounter == config['generations'] - 1 or (gCounter + 1) % config['plotFrequency'] == 0):
 
-        NNutil.plot(maxReward, avgReward, allReward, gCounter+1)
+        NNutil.plot(maxReward, avgReward, allReward, gCounter + 1)

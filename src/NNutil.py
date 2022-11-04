@@ -159,7 +159,8 @@ def plot(maxReward, avgReward, allReward, gCounter):
 
     top25 = []
     polyX = []
-
+    
+    # creates x axis values and stores the average of te top 25 percent
     for i in range(gCounter):
 
         polyX.append(i)
@@ -168,32 +169,40 @@ def plot(maxReward, avgReward, allReward, gCounter):
 
         top25.append(np.average(allReward[i][int(len(allReward[i]) * 0.75) :]))
 
+    # initializes highly sbdivided line
     line = np.linspace(0, len(polyX) - 1, 100)
 
+    # applyes the y walues from top, max, and avg to the highres line
     topModel = np.poly1d(np.polyfit(polyX, top25    , config['polyFactor']))
     maxModel = np.poly1d(np.polyfit(polyX, maxReward, config['polyFactor']))
     avgModel = np.poly1d(np.polyfit(polyX, avgReward, config['polyFactor']))
 
+    # creates new plot and initializes axis
     fig = plt.figure()
     ax = fig.add_axes([0, 0, 1.6, 0.9])
 
+    # plots line plots
     ax.plot(top25    , color='green' , label='^25')
     ax.plot(maxReward, color='red'   , label="Max")
     ax.plot(avgReward, color='orange', label="Avg")
 
+    # plots smoothed line plots
     ax.plot(line, topModel(line), color='green' , linestyle='dashed')
     ax.plot(line, maxModel(line), color='red'   , linestyle='dashed')
     ax.plot(line, avgModel(line), color='orange', linestyle='dashed')
 
+    # plots scatter plot per generation
     for i in range(gCounter):
 
         ax.scatter([i] * config['populationSize'], allReward[i], color = 'blue', s = 1)
 
+    # adds labels and displays the plot
     ax.set_xlabel("Generation")
     ax.set_ylabel("Reward")
     ax.legend()
     plt.show()
 
+    # evaluates if a plot should be stored as image
     if (gCounter == config['generations']):
 
         fileName = get_filename()
@@ -226,7 +235,9 @@ def get_filename():
 
 def write_logs(fileName, logEntry):
 
+    # creates or opens file
     f = open(fileName, 'a', newline = '')
+    
     # create the csv writer
     writer = csv.writer(f, delimiter = ',')
 
